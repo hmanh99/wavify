@@ -1,0 +1,239 @@
+{
+  "@@locale": "en",
+  "appTitle": "Wavify",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "navHome": "Home",
+  "navFavourite": "Favourite",
+  "navListen": "Listen",
+  "navUpload": "Upload",
+  "navProfile": "Profile",
+  "search": "Search",
+  "retry": "Try again",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "delete": "Delete",
+  "save": "Save",
+  "success": "Success",
+  "error": "Error",
+  "loading": "Loading...",
+  "refresh": "Refresh",
+  "selectLanguage": "Select Language",
+  "vietnamese": "Tiếng Việt",
+  "english": "English",
+  "errorOccurred": "An error occurred",
+  "goBack": "Go back",
+  "saveChanges": "Save changes",
+  "createNew": "Create new",
+  "justNow": "Just now",
+  "minutesAgo": "{count} minutes ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hoursAgo": "{count} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "signIn": "Sign In",
+  "signInSubtitle": "Welcome back to Wavify.",
+  "signUp": "Sign Up",
+  "signUpSubtitle": "Create an account to continue.",
+  "email": "Email",
+  "password": "Password",
+  "username": "Username",
+  "forgotPassword": "Forgot your password?",
+  "or": "Or",
+  "noAccount": "Don't have an account?",
+  "haveAccount": "Already have an account?",
+  "pleaseFillAllFields": "Please fill in all fields",
+
+  "searchPlaceholder": "Search songs, artists, albums...",
+  "recentSongs": "Recently Played",
+  "allSongs": "All Songs",
+  "loadSongsFailed": "Could not load songs",
+  "searchResults": "Search Results ({count})",
+  "@searchResults": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "allSongsWithCount": "All Songs ({count})",
+  "@allSongsWithCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "readyToPlay": "Ready to play",
+  "noSongsFound": "No songs found",
+  "noSongsFoundDesc": "Try searching with another title, artist or album",
+  "noSongsOnServer": "No songs on the server yet",
+  "noSongsOnServerDesc": "Be the first to upload your favorite song!",
+  "uploadNow": "Upload music now",
+
+  "noSongSelected": "No song selected",
+  "noSongSelectedDesc": "Choose a song from Home or Favourite to start enjoying music.",
+  "exploreSongs": "Explore Songs",
+  "queue": "Queue",
+  "playingQueue": "Playing Queue",
+  "tracksCount": "{count} tracks",
+  "@tracksCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "queueWithCount": "Queue ({count} tracks)",
+  "@queueWithCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "favoriteArtists": "Favorite Artists",
+  "noArtistsYet": "No artists yet",
+  "playlists": "Playlists",
+  "noPlaylistsYet": "No playlists yet",
+  "noPlaylistsYetDesc": "Create a playlist to save your favorite songs",
+  "favoriteSongs": "Songs",
+  "noFavoriteSongs": "No songs yet",
+  "noFavoriteSongsDesc": "Your favorite songs will appear here",
+  "createPlaylist": "Create Playlist",
+  "editPlaylist": "Edit Playlist",
+  "deletePlaylist": "Delete Playlist",
+  "playlistName": "Playlist name",
+  "playlistNameRequired": "Playlist name *",
+  "playlistNameHint": "Enter playlist name...",
+  "playlistNameRequiredError": "Playlist name cannot be empty",
+  "playlistDesc": "Description",
+  "playlistDescOptional": "Description (optional)",
+  "playlistDescHint": "Add a short description...",
+  "playAll": "Play All",
+  "addSongs": "Add Songs",
+  "emptyPlaylist": "This playlist is empty",
+  "emptyPlaylistHint": "Tap 'Add Songs' above to choose your favorite songs.",
+  "public": "Public",
+  "private": "Private",
+  "publicVisibility": "Public",
+  "privateVisibility": "Private",
+  "playlistNotFound": "Playlist not found",
+  "playlistEmptyToPlay": "This playlist has no songs to play",
+  "reorderSongs": "Reorder songs",
+  "doneReordering": "Done reordering",
+  "reorderDragHint": "Hold and drag songs to reorder playback.",
+  "removeFromPlaylist": "Remove from playlist",
+  "addToPlaylist": "Add to playlist",
+  "addSongsToPlaylist": "Add songs to playlist",
+  "createNewPlaylist": "Create new playlist",
+  "selectPlaylist": "Select playlist",
+  "songAlreadyInPlaylist": "Song is already in this playlist",
+  "tapToAddToPlaylist": "Tap to add to playlist",
+  "deletePlaylistConfirm": "Are you sure you want to delete playlist \"{name}\"? This action cannot be undone.",
+  "@deletePlaylistConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "selectedSongsCount": "Selected {selected}/{max} songs",
+  "@selectedSongsCount": {
+    "placeholders": {
+      "selected": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "selectAll": "Select all",
+  "deselectAll": "Deselect all",
+  "searchInLibrary": "Search library...",
+  "noSongsToAdd": "No songs to add",
+  "allSongsAlreadyAdded": "All songs from library have already been added to this playlist.",
+  "noMatchingSongsFound": "No matching songs found",
+  "addSelectedSongs": "Add {count} songs to playlist",
+  "@addSelectedSongs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "minutesSeconds": "{minutes} min {seconds} sec",
+  "@minutesSeconds": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "seconds": { "type": "int" }
+    }
+  },
+
+  "uploadMusic": "Upload Music",
+  "uploadNewSong": "Upload Song",
+  "myUploadedSongs": "My Songs",
+  "audioFile": "Audio File",
+  "chooseAudioFile": "Click to choose file",
+  "coverImage": "Cover Image",
+  "chooseCoverImage": "Choose cover image",
+  "changeCoverImage": "Change image",
+  "supportedAudioFormats": "Supports MP3, WAV, AAC, FLAC (max 50MB)",
+  "fileSize": "File size: {size}",
+  "@fileSize": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "songInfo": "Song Information",
+  "songTitle": "Title",
+  "artist": "Artist",
+  "albumOptional": "Album (optional)",
+  "visibility": "Visibility",
+  "submitUpload": "Upload Song",
+  "uploading": "Uploading...",
+  "uploadingWithPercent": "Uploading... {percent}%",
+  "@uploadingWithPercent": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "noUploadedSongs": "No songs uploaded yet",
+  "noUploadedSongsDesc": "Switch to the 'Upload Song' tab to upload your first song.",
+  "editSong": "Edit Song",
+  "deleteSong": "Delete Song",
+  "deleteSongConfirm": "Are you sure you want to delete song \"{title}\"? This will permanently delete the file.",
+  "@deleteSongConfirm": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "pleaseSelectAudioFile": "Please select an audio file",
+  "pleaseEnterSongTitle": "Please enter song title",
+  "pleaseEnterArtist": "Please enter artist name",
+
+  "myProfile": "My Profile",
+  "editProfile": "Edit Personal Info",
+  "editProfileSubtitle": "Change name, email, password",
+  "playbackHistory": "Playback History",
+  "playbackHistorySubtitle": "See songs you have listened to",
+  "language": "Language",
+  "languageSubtitle": "English",
+  "logout": "Log Out",
+  "logoutSubtitle": "Log out from this device",
+  "logoutConfirmTitle": "Log Out",
+  "logoutConfirmMessage": "Are you sure you want to log out from your account?",
+  "loggedOutSuccess": "Logged out successfully",
+  "newPasswordHint": "New password (leave blank to keep current)",
+  "usernameEmailRequired": "Username and email cannot be empty",
+  "usernameMinLength": "Username must be at least 4 characters",
+  "passwordMinLength": "New password must be at least 8 characters",
+
+  "historyTitle": "Playback History",
+  "emptyHistory": "No playback history yet",
+  "emptyHistoryDesc": "Songs you listen to for at least 15 seconds will be recorded here.",
+  "clearHistory": "Clear History",
+  "clearHistoryConfirmTitle": "Clear playback history?",
+  "clearHistoryConfirmMessage": "All your playback history will be deleted. Are you sure you want to proceed?"
+}
