@@ -932,6 +932,36 @@ abstract class AppLocalizations {
   /// **'English'**
   String get languageSubtitle;
 
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @selectThemeMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get selectThemeMode;
+
+  /// No description provided for @themeModeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get themeModeSystem;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeModeDark;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeModeLight;
+
   /// No description provided for @logout.
   ///
   /// In en, this message translates to:
@@ -1021,6 +1051,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All your playback history will be deleted. Are you sure you want to proceed?'**
   String get clearHistoryConfirmMessage;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @favoritePlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Playlists'**
+  String get favoritePlaylists;
+
+  /// No description provided for @noFavoritePlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite playlists yet'**
+  String get noFavoritePlaylists;
+
+  /// No description provided for @noFavoritePlaylistsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Heart any playlist to save it here'**
+  String get noFavoritePlaylistsDesc;
+
+  /// No description provided for @discoverPlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get discoverPlaylists;
+
+  /// No description provided for @discoverPublicPlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover Public Playlists'**
+  String get discoverPublicPlaylists;
+
+  /// No description provided for @searchPlaylistsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search playlists by name...'**
+  String get searchPlaylistsHint;
+
+  /// No description provided for @noPublicPlaylistsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No public playlists found'**
+  String get noPublicPlaylistsFound;
+
+  /// No description provided for @addedToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favorites'**
+  String get addedToFavorites;
+
+  /// No description provided for @removedFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favorites'**
+  String get removedFromFavorites;
+
+  /// No description provided for @recommendedSongs.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended for you'**
+  String get recommendedSongs;
+
+  /// No description provided for @shuffleRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get shuffleRecommendations;
+
+  /// No description provided for @seeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'See more'**
+  String get seeMore;
+
+  /// No description provided for @allFavoritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All Favorites'**
+  String get allFavoritesTitle;
+
+  /// No description provided for @searchFavoritesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search favorite songs or playlists...'**
+  String get searchFavoritesHint;
 }
 
 class _AppLocalizationsDelegate

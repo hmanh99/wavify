@@ -20,85 +20,65 @@ class AppScaffoldWithNavBar extends StatelessWidget {
     final currentIndex = navigationShell.currentIndex;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     final appColors = context.appColors;
-    const barHeight = 64.0;
-    const protrusion = 16.0;
-    final totalHeight = barHeight + protrusion + bottomPadding;
+    const barHeight = 60.0;
+    final totalHeight = barHeight + bottomPadding;
 
     return Scaffold(
       backgroundColor: context.theme.scaffoldBackgroundColor,
       body: navigationShell,
-      bottomNavigationBar: SizedBox(
+      bottomNavigationBar: Container(
         height: totalHeight,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: protrusion),
-              height: barHeight + bottomPadding,
-              decoration: BoxDecoration(
-                color: appColors.navBackground,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(AppRadius.xl),
+        decoration: BoxDecoration(
+          color: appColors.navBackground,
+          border: Border(
+            top: BorderSide(color: appColors.subtleBorder, width: 1),
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            child: Row(
+              children: [
+                _NavBarItem(
+                  icon: currentIndex == 0
+                      ? Icons.home_rounded
+                      : Icons.home_outlined,
+                  isSelected: currentIndex == 0,
+                  onTap: () => _onTap(0),
+                  tooltip: context.l10n.navHome,
                 ),
-                border: Border(
-                  top: BorderSide(color: appColors.subtleBorder, width: 1),
+                _NavBarItem(
+                  icon: currentIndex == 1
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_outline_rounded,
+                  isSelected: currentIndex == 1,
+                  onTap: () => _onTap(1),
+                  tooltip: context.l10n.navFavourite,
                 ),
-              ),
-              child: SafeArea(
-                top: false,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                  ),
-                  child: Row(
-                    children: [
-                      _NavBarItem(
-                        icon: currentIndex == 0
-                            ? Icons.home_rounded
-                            : Icons.home_outlined,
-                        isSelected: currentIndex == 0,
-                        onTap: () => _onTap(0),
-                        tooltip: context.l10n.navHome,
-                      ),
-                      _NavBarItem(
-                        icon: currentIndex == 1
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_outline_rounded,
-                        isSelected: currentIndex == 1,
-                        onTap: () => _onTap(1),
-                        tooltip: context.l10n.navFavourite,
-                      ),
-                      const SizedBox(width: 68),
-                      _NavBarItem(
-                        icon: currentIndex == 3
-                            ? Icons.file_upload_rounded
-                            : Icons.file_upload_outlined,
-                        isSelected: currentIndex == 3,
-                        onTap: () => _onTap(3),
-                        tooltip: context.l10n.navUpload,
-                      ),
-                      _NavBarItem(
-                        icon: currentIndex == 4
-                            ? Icons.person_rounded
-                            : Icons.person_outline_rounded,
-                        isSelected: currentIndex == 4,
-                        onTap: () => _onTap(4),
-                        tooltip: context.l10n.navProfile,
-                      ),
-                    ],
-                  ),
+                _CenterListenButton(
+                  isSelected: currentIndex == 2,
+                  onTap: () => _onTap(2),
                 ),
-              ),
+                _NavBarItem(
+                  icon: currentIndex == 3
+                      ? Icons.file_upload_rounded
+                      : Icons.file_upload_outlined,
+                  isSelected: currentIndex == 3,
+                  onTap: () => _onTap(3),
+                  tooltip: context.l10n.navUpload,
+                ),
+                _NavBarItem(
+                  icon: currentIndex == 4
+                      ? Icons.person_rounded
+                      : Icons.person_outline_rounded,
+                  isSelected: currentIndex == 4,
+                  onTap: () => _onTap(4),
+                  tooltip: context.l10n.navProfile,
+                ),
+              ],
             ),
-            Positioned(
-              top: 0,
-              child: _CenterListenButton(
-                isSelected: currentIndex == 2,
-                onTap: () => _onTap(2),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -117,37 +97,40 @@ class _CenterListenButton extends StatelessWidget {
     final appColors = context.appColors;
     final label = context.l10n.navListen;
 
-    return Semantics(
-      button: true,
-      selected: isSelected,
-      label: label,
-      child: Tooltip(
-        message: label,
-        child: AnimatedScale(
-          scale: isSelected ? 1.04 : 1.0,
-          duration: AppDurations.normal,
-          curve: Curves.easeOutCubic,
-          child: Material(
-            color: colorScheme.primary,
-            shape: CircleBorder(
-              side: BorderSide(
-                color: isSelected
-                    ? colorScheme.primary
-                    : appColors.subtleBorder,
-                width: isSelected ? 2.0 : 1.0,
-              ),
-            ),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: onTap,
-              child: SizedBox(
-                width: 60,
-                height: 60,
-                child: Center(
-                  child: Icon(
-                    Icons.music_note_rounded,
-                    size: 30,
-                    color: colorScheme.onPrimary,
+    return Expanded(
+      child: Semantics(
+        button: true,
+        selected: isSelected,
+        label: label,
+        child: Tooltip(
+          message: label,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            onTap: onTap,
+            child: Center(
+              child: AnimatedScale(
+                scale: isSelected ? 1.04 : 1.0,
+                duration: AppDurations.normal,
+                curve: Curves.easeOutCubic,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected
+                          ? colorScheme.primary
+                          : appColors.subtleBorder,
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.music_note_rounded,
+                      size: 25,
+                      color: colorScheme.onPrimary,
+                    ),
                   ),
                 ),
               ),
@@ -185,28 +168,16 @@ class _NavBarItem extends StatelessWidget {
         child: Tooltip(
           message: tooltip,
           child: InkWell(
-            borderRadius: BorderRadius.circular(AppRadius.lg),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             onTap: onTap,
-            child: Center(
-              child: AnimatedContainer(
-                duration: AppDurations.normal,
-                curve: Curves.easeOutCubic,
-                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? colorScheme.primary.withValues(alpha: 0.12)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                ),
-                child: Icon(
-                  icon,
-                  size: 24,
-                  color: isSelected ? colorScheme.primary : appColors.textMuted,
-                ),
+            child: SizedBox(
+              height: 40,
+              child: Icon(
+                icon,
+                size: 30,
+                color: isSelected
+                    ? colorScheme.onSurface
+                    : appColors.textMuted,
               ),
             ),
           ),

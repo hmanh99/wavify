@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_tokens.dart';
 
-/// Unified minimalist bottom sheet container with drag handle, SafeArea,
-/// and keyboard-inset protection.
+
 class AppBottomSheetFrame extends StatelessWidget {
   final Widget child;
   final double maxHeightFraction;
@@ -32,6 +31,9 @@ class AppBottomSheetFrame extends StatelessWidget {
           borderRadius: const BorderRadius.vertical(
             top: Radius.circular(AppRadius.xl),
           ),
+          border: Border(
+            top: BorderSide(color: appColors.subtleBorder, width: 1),
+          ),
         ),
         padding:
             padding ??
@@ -47,8 +49,8 @@ class AppBottomSheetFrame extends StatelessWidget {
           children: [
             Center(
               child: Container(
-                width: 36,
-                height: 4,
+                width: 32,
+                height: 3,
                 decoration: BoxDecoration(
                   color: appColors.subtleBorder,
                   borderRadius: BorderRadius.circular(AppRadius.hundred),

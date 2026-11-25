@@ -101,7 +101,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   imagePath: 'assets/images/signup.jpg',
                   title: context.l10n.signUp,
                   subtitle: context.l10n.signUpSubtitle,
-                  onBack: _handleBack,
                 ),
                 Center(
                   child: ConstrainedBox(
@@ -115,7 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: [
                               AuthTextField(
                                 label: context.l10n.username,
-                                hint: 'John Doe',
+                                hint: 'Username',
                                 controller: _fullNameController,
                                 textInputAction: TextInputAction.next,
                                 autofillHints: const [AutofillHints.name],
@@ -129,7 +128,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               const SizedBox(height: AppSpacing.lg),
                               AuthTextField(
                                 label: context.l10n.email,
-                                hint: 'johndoe@example.com',
+                                hint: 'example@wavify.app',
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
@@ -168,7 +167,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                 isLoading: isLoading,
                                 onPressed: _onSignUp,
                               ),
-                              const SizedBox(height: AppSpacing.md),
+                              Divider(
+                                color: appColors.subtleBorder,
+                                height: AppSpacing.xl,
+                              ),
                               Center(
                                 child: TextButton(
                                   onPressed: _handleBack,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_l10n.dart';
 import '../theme/app_tokens.dart';
 
-/// Consistent minimalist AppBar with unified back navigation and clean actions.
+/// Consistent minimalist AppBar with unified back navigation, hairline divider, and clean actions.
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final VoidCallback? onBack;
@@ -21,10 +21,12 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize =>
-      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
+      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 1.0));
 
   @override
   Widget build(BuildContext context) {
+    final appColors = context.appColors;
+
     return AppBar(
       backgroundColor: context.theme.scaffoldBackgroundColor,
       elevation: AppElevation.none,
@@ -33,7 +35,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, size: 22),
+              icon: const Icon(Icons.arrow_back_rounded, size: 20),
               tooltip: context.l10n.goBack,
               onPressed: onBack ?? () => Navigator.of(context).maybePop(),
             )
@@ -47,7 +49,14 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       actions: actions,
-      bottom: bottom,
+      bottom: bottom ??
+          PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              height: 1.0,
+              color: appColors.subtleBorder,
+            ),
+          ),
     );
   }
 }

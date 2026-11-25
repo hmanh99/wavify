@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +8,7 @@ import '../../../../core/di/service_locator.dart';
 import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_state_view.dart';
 import '../../data/models/song_model.dart';
 import '../../domain/entities/playback_argument.dart';
@@ -101,6 +104,15 @@ class _ListenPageViewState extends State<_ListenPageView> {
     );
   }
 
+  bool _hasValidCoverUrl(String? coverUrl) {
+    if (coverUrl == null) return false;
+    final trimmed = coverUrl.trim();
+    if (trimmed.isEmpty || trimmed == 'null' || trimmed == 'undefined') {
+      return false;
+    }
+    return trimmed.startsWith('http://') || trimmed.startsWith('https://');
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
@@ -126,91 +138,181 @@ class _ListenPageViewState extends State<_ListenPageView> {
           );
         }
 
+        final hasCoverBackground = _hasValidCoverUrl(song.coverUrl);
+
         return Scaffold(
           backgroundColor: context.theme.scaffoldBackgroundColor,
-          body: SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 520),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg + AppSpacing.xs,
-                    vertical: AppSpacing.md,
-                  ),
-                  child: Column(
-                    children: [
-                      PlayerArtwork(song: song),
-                      const SizedBox(height: AppSpacing.xl),
-                      PlayerProgressBar(
-                        position: state.currentPosition,
-                        duration: state.totalDuration,
-                        onSeek: (position) {
-                          context.read<PlayerBloc>().add(
-                            PlayerSeekRequested(position),
-                          );
-                        },
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (hasCoverBackground)
+                _ListenCoverBackground(
+                  coverUrl: song.coverUrl!.trim(),
+                  overlayColor: context.theme.scaffoldBackgroundColor,
+                ),
+              SafeArea(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                        vertical: AppSpacing.md,
                       ),
-                      const SizedBox(height: AppSpacing.lg),
-                      PlayerControls(
-                        isPlaying: state.isPlaying,
-                        isShuffle: state.isShuffle,
-                        isRepeat: state.isRepeat,
-                        onPlayPause: () {
-                          if (state.playlist.isEmpty) {
-                            context.read<PlayerBloc>().add(
-                              PlayerPlaySongRequested(song),
-                            );
-                          } else {
-                            context.read<PlayerBloc>().add(
-                              const PlayerPlayPauseToggled(),
-                            );
-                          }
-                        },
-                        onPrevious: () {
-                          context.read<PlayerBloc>().add(
-                            const PlayerPreviousRequested(),
-                          );
-                        },
-                        onNext: () {
-                          context.read<PlayerBloc>().add(
-                            const PlayerNextRequested(),
-                          );
-                        },
-                        onShuffleToggle: () {
-                          context.read<PlayerBloc>().add(
-                            const PlayerShuffleToggled(),
-                          );
-                        },
-                        onRepeatToggle: () {
-                          context.read<PlayerBloc>().add(
-                            const PlayerRepeatToggled(),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      TextButton.icon(
-                        onPressed: () => _openQueue(context, state),
-                        icon: Icon(
-                          Icons.queue_music_rounded,
-                          color: colorScheme.primary,
-                          size: 20,
-                        ),
-                        label: Text(
-                          context.l10n.queueWithCount(state.playlist.length),
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w600,
+                      child: Column(
+                        children: [
+                          AppCard(
+                            showBorder: true,
+                            borderRadius: AppRadius.xl,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.md,
+                              vertical: AppSpacing.lg,
+                            ),
+                            child: Column(
+                              children: [
+                                PlayerArtwork(
+                                  song: song,
+                                  isFavourite: state.isFavourite,
+                                  onFavouriteTap: () {
+                                    context.read<PlayerBloc>().add(
+                                      const PlayerFavoriteToggled(),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                PlayerProgressBar(
+                                  position: state.currentPosition,
+                                  duration: state.totalDuration,
+                                  onSeek: (position) {
+                                    context.read<PlayerBloc>().add(
+                                      PlayerSeekRequested(position),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                PlayerControls(
+                                  isPlaying: state.isPlaying,
+                                  isShuffle: state.isShuffle,
+                                  isRepeat: state.isRepeat,
+                                  onPlayPause: () {
+                                    if (state.playlist.isEmpty) {
+                                      context.read<PlayerBloc>().add(
+                                        PlayerPlaySongRequested(song),
+                                      );
+                                    } else {
+                                      context.read<PlayerBloc>().add(
+                                        const PlayerPlayPauseToggled(),
+                                      );
+                                    }
+                                  },
+                                  onPrevious: () {
+                                    context.read<PlayerBloc>().add(
+                                      const PlayerPreviousRequested(),
+                                    );
+                                  },
+                                  onNext: () {
+                                    context.read<PlayerBloc>().add(
+                                      const PlayerNextRequested(),
+                                    );
+                                  },
+                                  onShuffleToggle: () {
+                                    context.read<PlayerBloc>().add(
+                                      const PlayerShuffleToggled(),
+                                    );
+                                  },
+                                  onRepeatToggle: () {
+                                    context.read<PlayerBloc>().add(
+                                      const PlayerRepeatToggled(),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: AppSpacing.lg),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: context.appColors.cardSurface,
+                              minimumSize: const Size(0, 48),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.lg,
+                                vertical: AppSpacing.sm + 2,
+                              ),
+                              side: BorderSide(
+                                color: context.appColors.subtleBorder,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.hundred,
+                                ),
+                              ),
+                            ),
+                            onPressed: () => _openQueue(context, state),
+                            icon: Icon(
+                              Icons.queue_music_rounded,
+                              color: colorScheme.primary,
+                              size: 18,
+                            ),
+                            label: Text(
+                              context.l10n.queueWithCount(state.playlist.length),
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
         );
       },
+    );
+  }
+}
+
+class _ListenCoverBackground extends StatelessWidget {
+  final String coverUrl;
+  final Color overlayColor;
+
+  const _ListenCoverBackground({
+    required this.coverUrl,
+    required this.overlayColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Image.network(
+        coverUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (!wasSynchronouslyLoaded && frame == null) {
+            return const SizedBox.shrink();
+          }
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              ImageFiltered(
+                imageFilter: ImageFilter.blur(
+                  sigmaX: 14,
+                  sigmaY: 14,
+                  tileMode: TileMode.mirror,
+                ),
+                child: child,
+              ),
+              ColoredBox(color: overlayColor.withValues(alpha: 0.35)),
+            ],
+          );
+        },
+      ),
     );
   }
 }

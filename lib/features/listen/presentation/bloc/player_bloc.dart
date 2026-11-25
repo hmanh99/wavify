@@ -48,6 +48,11 @@ class _PlayerTrackCompleted extends PlayerEvent {
   const _PlayerTrackCompleted();
 }
 
+typedef ToggleFavoriteSongCallback = Future<void> Function(
+  SongModel song,
+  bool targetFavorite,
+);
+
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> implements PlaybackBridge {
   final ListenRepository repository;
   final PlaySongUseCase playSongUseCase;
@@ -58,6 +63,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> implements PlaybackBridg
   final RecordListenHistoryUseCase recordListenHistoryUseCase;
   final AudioPlayerService? audioPlayerService;
   final TrackListenCallback? onRecordHistory;
+  final ToggleFavoriteSongCallback? onToggleFavoriteSong;
   final Random _random = Random();
   final ValueNotifier<Set<String>> _favouriteSongIdsNotifier = ValueNotifier(const {});
 
@@ -79,6 +85,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> implements PlaybackBridg
     required this.recordListenHistoryUseCase,
     this.audioPlayerService,
     this.onRecordHistory,
+    this.onToggleFavoriteSong,
   }) : super(const PlayerState()) {
     _registerEventHandlers();
     _initSubscriptions();
@@ -94,6 +101,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> implements PlaybackBridg
     RecordListenHistoryUseCase? recordListenHistoryUseCase,
     AudioPlayerService? audioPlayerService,
     TrackListenCallback? onRecordHistory,
+    ToggleFavoriteSongCallback? onToggleFavoriteSong,
   }) {
     final ListenRepository resolvedRepo = repository ??
         (audioPlayerService != null
@@ -114,6 +122,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> implements PlaybackBridg
           recordListenHistoryUseCase ?? RecordListenHistoryUseCase(resolvedRepo),
       audioPlayerService: audioPlayerService,
       onRecordHistory: onRecordHistory,
+      onToggleFavoriteSong: onToggleFavoriteSong,
     );
   }
 
@@ -140,6 +149,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> implements PlaybackBridg
     on<PlayerShuffleToggled>(_onShuffleToggled);
     on<PlayerRepeatToggled>(_onRepeatToggled);
     on<PlayerFavoriteToggled>(_onFavoriteToggled);
+    on<PlayerFavoritesSynced>(_onFavoritesSynced);
 
     on<_PlayerStatusUpdated>(_onStatusUpdated);
     on<_PlayerPositionUpdated>(_onPositionUpdated);
@@ -344,14 +354,32 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> implements PlaybackBridg
     if (song == null) return;
 
     final updatedFavs = Set<String>.from(state.favouriteSongIds);
+    final bool targetFavorite;
     if (updatedFavs.contains(song.id)) {
       updatedFavs.remove(song.id);
+      targetFavorite = false;
     } else {
       updatedFavs.add(song.id);
+      targetFavorite = true;
     }
 
     _favouriteSongIdsNotifier.value = updatedFavs;
     emit(state.copyWith(favouriteSongIds: updatedFavs));
+
+    if (onToggleFavoriteSong != null && song.id.isNotEmpty) {
+      unawaited(
+        onToggleFavoriteSong!(song, targetFavorite).catchError((_) {}),
+      );
+    }
+  }
+
+  void _onFavoritesSynced(
+    PlayerFavoritesSynced event,
+    Emitter<PlayerState> emit,
+  ) {
+    final synced = Set<String>.from(event.favouriteSongIds);
+    _favouriteSongIdsNotifier.value = synced;
+    emit(state.copyWith(favouriteSongIds: synced));
   }
 
   void _onStatusUpdated(

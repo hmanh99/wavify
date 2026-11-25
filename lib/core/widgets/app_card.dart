@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_tokens.dart';
 
-/// Minimalist flat surface card with optional hairline border and ink ripple.
+/// Minimalist elevated surface card with crisp 1px perimeter border,
+/// ultra-diffuse ambient separation, and ink ripple.
 class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -19,7 +20,7 @@ class AppCard extends StatelessWidget {
     this.onTap,
     this.onLongPress,
     this.borderRadius = AppRadius.lg,
-    this.showBorder = false,
+    this.showBorder = true,
     this.color,
     this.semanticLabel,
   });
@@ -28,6 +29,8 @@ class AppCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final appColors = context.appColors;
     final radius = BorderRadius.circular(borderRadius);
+    final effectiveColor = color ?? appColors.cardSurface;
+    final isDark = context.theme.brightness == Brightness.dark;
 
     Widget content = Container(
       padding: padding ?? const EdgeInsets.all(AppSpacing.md),
@@ -41,19 +44,41 @@ class AppCard extends StatelessWidget {
     );
 
     if (onTap != null || onLongPress != null) {
+      final highlight = context.colorScheme.onSurface.withValues(alpha: 0.05);
       content = InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
         borderRadius: radius,
+        splashFactory: InkRipple.splashFactory,
+        highlightColor: highlight,
+        splashColor: highlight,
         child: content,
       );
     }
 
-    final card = Material(
-      color: color ?? appColors.cardSurface,
+    Widget card = Material(
+      color: effectiveColor,
       borderRadius: radius,
       child: content,
     );
+
+    if (effectiveColor.a > 0) {
+      card = DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? const Color(0x28000000)
+                  : const Color(0x0C000000),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: card,
+      );
+    }
 
     if (semanticLabel != null) {
       return Semantics(

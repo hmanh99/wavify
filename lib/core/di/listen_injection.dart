@@ -1,4 +1,6 @@
 import '../services/playback_bridge.dart';
+import '../../features/favorite/presentation/bloc/favorite_bloc.dart';
+import '../../features/favorite/presentation/bloc/favorite_event.dart';
 import '../../features/listen/data/datasources/audio_player_service.dart';
 import '../../features/listen/data/datasources/audio_player_service_impl.dart';
 import '../../features/listen/data/repositories/listen_repository_impl.dart';
@@ -11,6 +13,8 @@ import '../../features/listen/domain/usecases/seek_song_usecase.dart';
 import '../../features/listen/domain/usecases/set_volume_usecase.dart';
 import '../../features/listen/domain/usecases/stop_song_usecase.dart';
 import '../../features/listen/presentation/bloc/player_bloc.dart';
+import '../../features/favorite/domain/entities/song_entity.dart'
+    as playlist_song;
 import 'service_locator.dart';
 
 Future<void> initListenDependencies({
@@ -78,6 +82,25 @@ Future<void> initListenDependencies({
             (sl.isRegistered<TrackListenCallback>()
                 ? sl<TrackListenCallback>()
                 : null),
+        onToggleFavoriteSong: (song, targetFavorite) async {
+          if (sl.isRegistered<FavoriteBloc>()) {
+            sl<FavoriteBloc>().add(
+              ToggleFavoriteSongRequested(
+                songId: song.id,
+                song: playlist_song.SongEntity(
+                  id: song.id,
+                  title: song.title,
+                  artist: song.artist,
+                  album: song.album,
+                  durationSec: song.duration.inSeconds,
+                  fileUrl: song.fileUrl ?? '',
+                  coverUrl: song.coverUrl,
+                ),
+                desiredState: targetFavorite,
+              ),
+            );
+          }
+        },
       ),
     );
   }

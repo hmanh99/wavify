@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/colors_constant.dart';
 import 'app_tokens.dart';
 
@@ -12,59 +13,61 @@ class AppTheme {
         color: primaryText,
         fontSize: 28,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.5,
-        height: 1.2,
+        letterSpacing: -0.7,
+        height: 1.18,
       ),
       headlineSmall: TextStyle(
         color: primaryText,
-        fontSize: 22,
+        fontSize: 21,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.3,
-        height: 1.25,
+        letterSpacing: -0.45,
+        height: 1.22,
       ),
       titleLarge: TextStyle(
         color: primaryText,
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
-        height: 1.3,
+        letterSpacing: -0.25,
+        height: 1.28,
       ),
       titleMedium: TextStyle(
         color: primaryText,
         fontSize: 15,
         fontWeight: FontWeight.w600,
-        height: 1.35,
+        letterSpacing: -0.15,
+        height: 1.32,
       ),
       bodyLarge: TextStyle(
         color: primaryText,
         fontSize: 15,
         fontWeight: FontWeight.w400,
-        height: 1.4,
+        height: 1.45,
       ),
       bodyMedium: TextStyle(
         color: secondaryText,
         fontSize: 14,
         fontWeight: FontWeight.w400,
-        height: 1.4,
+        height: 1.45,
       ),
       bodySmall: TextStyle(
         color: secondaryText,
         fontSize: 12,
         fontWeight: FontWeight.w400,
-        height: 1.35,
+        height: 1.38,
       ),
       labelLarge: TextStyle(
         color: primaryText,
-        fontSize: 14,
+        fontSize: 13.5,
         fontWeight: FontWeight.w600,
+        letterSpacing: -0.1,
         height: 1.25,
       ),
       labelSmall: TextStyle(
         color: secondaryText,
         fontSize: 11,
         fontWeight: FontWeight.w600,
-        letterSpacing: 0.3,
-        height: 1.25,
+        letterSpacing: 0.5,
+        height: 1.2,
       ),
     );
   }
@@ -83,7 +86,6 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
-      fontFamily: 'Roboto',
       scaffoldBackgroundColor: scaffoldBackground,
       primaryColor: colorScheme.primary,
       colorScheme: colorScheme,
@@ -103,6 +105,9 @@ class AppTheme {
         centerTitle: true,
         titleTextStyle: textTheme.titleLarge,
         iconTheme: IconThemeData(color: colorScheme.onSurface, size: 22),
+        systemOverlayStyle: brightness == Brightness.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
       ),
       cardTheme: CardThemeData(
         color: semanticColors.cardSurface,
@@ -245,6 +250,7 @@ class AppTheme {
       ),
       tabBarTheme: TabBarThemeData(
         indicatorColor: colorScheme.primary,
+        indicatorSize: TabBarIndicatorSize.label,
         labelColor: colorScheme.onSurface,
         unselectedLabelColor: semanticColors.textMuted,
         dividerColor: semanticColors.subtleBorder,

@@ -77,20 +77,20 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                   )
                 : null,
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
+              horizontal: AppSpacing.md,
               vertical: AppSpacing.md,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.xl),
+              borderRadius: BorderRadius.circular(AppRadius.md),
               borderSide: BorderSide(color: appColors.subtleBorder),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.xl),
+              borderRadius: BorderRadius.circular(AppRadius.md),
               borderSide: BorderSide(color: appColors.subtleBorder),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-              borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              borderSide: BorderSide(color: colorScheme.primary, width: 1.2),
             ),
           ),
         );

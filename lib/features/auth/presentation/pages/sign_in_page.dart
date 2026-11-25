@@ -102,9 +102,6 @@ class _SignInPageState extends State<SignInPage> {
                   imagePath: 'assets/images/signin.jpg',
                   title: context.l10n.signIn,
                   subtitle: context.l10n.signInSubtitle,
-                  onBack: Navigator.of(context).canPop()
-                      ? () => Navigator.of(context).pop()
-                      : null,
                 ),
                 Center(
                   child: ConstrainedBox(
@@ -118,7 +115,7 @@ class _SignInPageState extends State<SignInPage> {
                             children: [
                               AuthTextField(
                                 label: context.l10n.email,
-                                hint: 'user@example.com',
+                                hint: 'example@wavify.app',
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
@@ -168,7 +165,10 @@ class _SignInPageState extends State<SignInPage> {
                                 isLoading: isLoading,
                                 onPressed: _onSignIn,
                               ),
-                              const SizedBox(height: AppSpacing.md),
+                              Divider(
+                                color: appColors.subtleBorder,
+                                height: AppSpacing.xl,
+                              ),
                               Center(
                                 child: TextButton(
                                   onPressed: () =>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/theme/app_tokens.dart';
 
 class PlayerHeader extends StatelessWidget {
@@ -19,6 +20,7 @@ class PlayerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
     final textTheme = context.textTheme;
+    final appColors = context.appColors;
 
     return Row(
       children: [
@@ -29,17 +31,27 @@ class PlayerHeader extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: textTheme.titleMedium,
+            style: textTheme.labelLarge?.copyWith(
+              color: appColors.textMuted,
+            ),
           ),
         ),
         IconButton(
-          tooltip: isFavourite ? 'Remove from favourites' : 'Add to favourites',
+          style: IconButton.styleFrom(
+            backgroundColor: isFavourite ? appColors.inputFill : null,
+            side: isFavourite
+                ? BorderSide(color: appColors.subtleBorder, width: 1)
+                : null,
+          ),
+          tooltip: isFavourite
+              ? context.l10n.removeFromFavorites
+              : context.l10n.addToFavorites,
           icon: Icon(
             isFavourite
                 ? Icons.favorite_rounded
                 : Icons.favorite_border_rounded,
             color: isFavourite ? colorScheme.primary : colorScheme.onSurface,
-            size: 24,
+            size: 22,
           ),
           onPressed: onFavouriteTap,
         ),

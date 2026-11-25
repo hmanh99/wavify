@@ -5,19 +5,19 @@ import '../services/playback_bridge.dart';
 import '../../features/listen/data/datasources/audio_player_service.dart';
 import 'auth_injection.dart';
 import 'dio_injection.dart';
+import 'favorite_injection.dart';
 import 'history_injection.dart';
 import 'home_injection.dart';
 import 'listen_injection.dart';
-import 'playlist_injection.dart';
 import 'profile_injection.dart';
 import 'upload_injection.dart';
 
 export 'auth_injection.dart';
 export 'dio_injection.dart';
+export 'favorite_injection.dart';
 export 'history_injection.dart';
 export 'home_injection.dart';
 export 'listen_injection.dart';
-export 'playlist_injection.dart';
 export 'profile_injection.dart';
 export 'upload_injection.dart';
 
@@ -74,9 +74,9 @@ Future<void> initDependencies({
   await initHistoryDependencies(baseUrl: baseUrl, customDio: customDio);
   await initUploadDependencies(baseUrl: baseUrl, customDio: customDio);
   await initHomeDependencies(baseUrl: baseUrl, customDio: customDio);
+  await initFavoriteDependencies(baseUrl: baseUrl, customDio: customDio);
   await initListenDependencies(
     customAudioPlayerService: customAudioPlayerService,
     onRecordHistory: onRecordHistory,
   );
-  await initPlaylistDependencies(baseUrl: baseUrl, customDio: customDio);
 }

@@ -627,5 +627,50 @@ void main() {
 
       expect(playerBloc.state.isRepeat, isTrue);
     });
+
+    testWidgets('ListenPage renders coverUrl background when valid and falls back to theme background when absent', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      const songWithCover = SongModel(
+        id: 'song_cover',
+        title: 'Covered Track',
+        artist: 'Cover Artist',
+        coverUrl: 'https://example.com/cover.jpg',
+        fileUrl: 'https://res.cloudinary.com/demo/solar_echoes.mp3',
+      );
+
+      playerBloc.add(const PlayerPlaySongRequested(songWithCover));
+
+      await tester.pumpWidget(
+        BlocProvider<PlayerBloc>.value(
+          value: playerBloc,
+          child: MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: const ListenPage(),
+          ),
+        ),
+      );
+      await tester.runAsync(() async {
+        await Future.delayed(const Duration(milliseconds: 50));
+      });
+      await tester.pump();
+
+      // One Image for the background + one Image inside MusicArtwork
+      expect(find.byType(Image), findsNWidgets(2));
+
+      playerBloc.add(PlayerPlayPlaylistRequested(playlist: testPlaylist, initialIndex: 0));
+      await tester.runAsync(() async {
+        await Future.delayed(const Duration(milliseconds: 50));
+      });
+      await tester.pump();
+
+      // testPlaylist song1 has empty coverUrl -> no Image widgets rendered
+      expect(find.byType(Image), findsNothing);
+    });
   });
 }

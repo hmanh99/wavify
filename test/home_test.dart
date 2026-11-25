@@ -13,7 +13,7 @@ import 'package:wavify/features/home/presentation/bloc/home_bloc.dart';
 import 'package:wavify/features/home/presentation/bloc/home_event.dart';
 import 'package:wavify/features/home/presentation/bloc/home_state.dart';
 import 'package:wavify/features/home/presentation/pages/home_page.dart';
-import 'package:wavify/features/home/presentation/widgets/all_songs_section.dart';
+import 'package:wavify/features/home/presentation/widgets/recommend_songs_section.dart';
 import 'package:wavify/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:wavify/features/home/domain/entities/song_entity.dart';
 
@@ -238,10 +238,30 @@ void main() {
         ]),
       );
     });
+
+    test('HomeShuffleRecommendationsRequested shuffles recommendedSongs into a new order', () async {
+      bloc.emit(HomeLoaded(
+        allSongs: mockRepo.songs,
+        filteredSongs: mockRepo.songs,
+        recommendedSongs: mockRepo.songs,
+      ));
+
+      bloc.add(const HomeShuffleRecommendationsRequested());
+
+      await expectLater(
+        bloc.stream,
+        emits(
+          predicate<HomeState>((s) =>
+              s is HomeLoaded &&
+              s.recommendedSongs.length == 2 &&
+              s.recommendedSongs.first.id != mockRepo.songs.first.id),
+        ),
+      );
+    });
   });
 
   group('HomePage Widget Tests', () {
-    testWidgets('HomePage displays header, search bar, and all songs', (WidgetTester tester) async {
+    testWidgets('HomePage displays header, search bar, and recommended songs with shuffle', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {
@@ -267,9 +287,23 @@ void main() {
 
       expect(find.byType(HomeSearchBar), findsOneWidget);
       expect(find.byIcon(Icons.search_rounded), findsOneWidget);
-      expect(find.byType(AllSongsSection), findsOneWidget);
+      expect(find.byType(RecommendSongsSection), findsOneWidget);
+      expect(find.text('Đề xuất cho bạn'), findsOneWidget);
+      expect(find.text('Đổi bài'), findsOneWidget);
       expect(find.text('Midnight Serenade'), findsWidgets);
       expect(find.text('Neon Skyline'), findsWidgets);
+
+      final beforeOrder = (testBloc.state as HomeLoaded)
+          .recommendedSongs
+          .map((s) => s.id)
+          .toList();
+      await tester.tap(find.text('Đổi bài'));
+      await tester.pump();
+      final afterOrder = (testBloc.state as HomeLoaded)
+          .recommendedSongs
+          .map((s) => s.id)
+          .toList();
+      expect(afterOrder, isNot(equals(beforeOrder)));
     });
   });
 }

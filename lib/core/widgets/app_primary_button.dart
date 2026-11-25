@@ -31,6 +31,7 @@ class AppPrimaryButton extends StatefulWidget {
 
 class _AppPrimaryButtonState extends State<AppPrimaryButton> {
   bool _isDebouncing = false;
+  bool _isPressed = false;
 
   void _handleTap() {
     if (_isDebouncing || widget.isLoading || widget.onPressed == null) return;
@@ -39,6 +40,21 @@ class _AppPrimaryButtonState extends State<AppPrimaryButton> {
     Future.delayed(AppDurations.slow, () {
       if (mounted) _isDebouncing = false;
     });
+  }
+
+  Widget _wrapPressMotion(Widget child, {required bool enabled}) {
+    return Listener(
+      onPointerDown: enabled ? (_) => setState(() => _isPressed = true) : null,
+      onPointerUp: enabled ? (_) => setState(() => _isPressed = false) : null,
+      onPointerCancel:
+          enabled ? (_) => setState(() => _isPressed = false) : null,
+      child: AnimatedScale(
+        scale: (_isPressed && enabled) ? 0.985 : 1.0,
+        duration: AppDurations.fast,
+        curve: Curves.easeOutCubic,
+        child: child,
+      ),
+    );
   }
 
   @override
@@ -84,17 +100,56 @@ class _AppPrimaryButtonState extends State<AppPrimaryButton> {
         (widget.isLoading || widget.onPressed == null) ? null : _handleTap;
 
     if (widget.isSecondary) {
-      return ConstrainedBox(
+      return _wrapPressMotion(
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: widget.minHeight,
+            minWidth: widget.width ?? 0,
+          ),
+          child: SizedBox(
+            width: widget.width,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: colorScheme.onSurface,
+                side: BorderSide(color: appColors.subtleBorder),
+                minimumSize: Size(48, widget.minHeight),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+              ),
+              onPressed: effectiveOnPressed,
+              child: content,
+            ),
+          ),
+        ),
+        enabled: effectiveOnPressed != null,
+      );
+    }
+
+    final bgColor = widget.isDestructive
+        ? colorScheme.error
+        : colorScheme.primary;
+    final fgColor = widget.isDestructive
+        ? colorScheme.onError
+        : colorScheme.onPrimary;
+
+    return _wrapPressMotion(
+      ConstrainedBox(
         constraints: BoxConstraints(
           minHeight: widget.minHeight,
           minWidth: widget.width ?? 0,
         ),
         child: SizedBox(
           width: widget.width,
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: colorScheme.onSurface,
-              side: BorderSide(color: appColors.subtleBorder),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: bgColor,
+              foregroundColor: fgColor,
+              elevation: AppElevation.none,
               minimumSize: Size(48, widget.minHeight),
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.lg,
@@ -108,41 +163,8 @@ class _AppPrimaryButtonState extends State<AppPrimaryButton> {
             child: content,
           ),
         ),
-      );
-    }
-
-    final bgColor = widget.isDestructive
-        ? colorScheme.error
-        : colorScheme.primary;
-    final fgColor = widget.isDestructive
-        ? colorScheme.onError
-        : colorScheme.onPrimary;
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: widget.minHeight,
-        minWidth: widget.width ?? 0,
       ),
-      child: SizedBox(
-        width: widget.width,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: bgColor,
-            foregroundColor: fgColor,
-            elevation: AppElevation.none,
-            minimumSize: Size(48, widget.minHeight),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
-          ),
-          onPressed: effectiveOnPressed,
-          child: content,
-        ),
-      ),
+      enabled: effectiveOnPressed != null,
     );
   }
 }

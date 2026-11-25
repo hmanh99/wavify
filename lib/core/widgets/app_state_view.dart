@@ -33,28 +33,29 @@ class AppEmptyState extends StatelessWidget {
     final body = Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xl,
-        vertical: AppSpacing.xxl,
+        vertical: AppSpacing.xl,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: appColors.inputFill,
-              shape: BoxShape.circle,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: appColors.subtleBorder, width: 1),
             ),
-            child: Icon(icon, size: 28, color: appColors.textMuted),
+            child: Icon(icon, size: 22, color: appColors.textMuted),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
           Text(
             title,
             textAlign: TextAlign.center,
             style: textTheme.titleMedium,
           ),
           if (description != null && description!.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.xs + 2),
             Text(
               description!,
               textAlign: TextAlign.center,
@@ -62,7 +63,7 @@ class AppEmptyState extends StatelessWidget {
             ),
           ],
           if (actionLabel != null && onAction != null) ...[
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.lg),
             AppPrimaryButton(
               text: actionLabel!,
               icon: actionIcon,
@@ -80,6 +81,7 @@ class AppEmptyState extends StatelessWidget {
 
     return AppCard(
       padding: EdgeInsets.zero,
+      showBorder: true,
       child: SizedBox(width: double.infinity, child: body),
     );
   }
@@ -109,37 +111,41 @@ class AppErrorState extends StatelessWidget {
     final body = Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xl,
-        vertical: AppSpacing.xxl,
+        vertical: AppSpacing.xl,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              color: colorScheme.error.withValues(alpha: 0.14),
-              shape: BoxShape.circle,
+              color: colorScheme.error.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(
+                color: colorScheme.error.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Icon(
               Icons.error_outline_rounded,
-              size: 28,
+              size: 22,
               color: colorScheme.error,
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
           Text(
             title,
             textAlign: TextAlign.center,
             style: textTheme.titleMedium,
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.xs + 2),
           Text(
             message,
             textAlign: TextAlign.center,
             style: textTheme.bodyMedium?.copyWith(color: appColors.textMuted),
           ),
-          const SizedBox(height: AppSpacing.xl),
+          const SizedBox(height: AppSpacing.lg),
           AppPrimaryButton(
             text: context.l10n.retry,
             icon: Icons.refresh_rounded,
@@ -221,7 +227,7 @@ class AppSkeletonBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: context.appColors.cardSurface,
+        color: context.appColors.inputFill,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
     );

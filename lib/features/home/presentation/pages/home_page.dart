@@ -8,15 +8,17 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/services/playback_bridge.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/widgets/app_state_view.dart';
-import '../../../playlist/domain/entities/song_entity.dart' as playlist_song;
-import '../../../playlist/presentation/bloc/playlist_bloc.dart';
-import '../../../playlist/presentation/widgets/add_to_playlist_bottom_sheet.dart';
+import '../../../favorite/presentation/bloc/favorite_bloc.dart';
+import '../../../favorite/presentation/bloc/favorite_event.dart';
+import '../../../favorite/domain/entities/song_entity.dart' as playlist_song;
+import '../../../favorite/presentation/bloc/playlist_bloc.dart';
+import '../../../favorite/presentation/widgets/add_to_playlist_bottom_sheet.dart';
 import '../../data/models/song_model.dart';
 import '../../domain/entities/song_entity.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
-import '../widgets/all_songs_section.dart';
+import '../widgets/recommend_songs_section.dart';
 import '../widgets/home_search_bar.dart';
 import '../widgets/recently_played_section.dart';
 
@@ -67,11 +69,16 @@ class _HomeViewState extends State<_HomeView> {
   void _onPlaySongEntity(
     BuildContext context,
     SongEntity song,
-    List<SongEntity> playlist,
-  ) {
-    final playbackItems = playlist
-        .map((s) => s.toSongModel().toPlaybackMap())
-        .toList();
+    List<SongEntity> playlist, {
+    Set<String> favoriteSongIds = const {},
+  }) {
+    final playbackItems = playlist.map((s) {
+      final map = s.toSongModel().toPlaybackMap();
+      if (favoriteSongIds.contains(s.id)) {
+        map['isFavourite'] = true;
+      }
+      return map;
+    }).toList();
     final index = playlist.indexWhere((s) => s.id == song.id);
     final targetIndex = index >= 0 ? index : 0;
 
@@ -88,9 +95,16 @@ class _HomeViewState extends State<_HomeView> {
   void _onPlaySongModel(
     BuildContext context,
     SongModel song,
-    List<SongModel> playlist,
-  ) {
-    final playbackItems = playlist.map((s) => s.toPlaybackMap()).toList();
+    List<SongModel> playlist, {
+    Set<String> favoriteSongIds = const {},
+  }) {
+    final playbackItems = playlist.map((s) {
+      final map = s.toPlaybackMap();
+      if (favoriteSongIds.contains(s.id)) {
+        map['isFavourite'] = true;
+      }
+      return map;
+    }).toList();
     final index = playlist.indexOf(song);
     final targetIndex = index >= 0 ? index : 0;
 
@@ -102,6 +116,34 @@ class _HomeViewState extends State<_HomeView> {
     }
 
     context.go(AppRouter.listen);
+  }
+
+  FavoriteBloc? _watchFavoriteBloc(BuildContext context) {
+    try {
+      return context.watch<FavoriteBloc>();
+    } catch (_) {
+      return sl.isRegistered<FavoriteBloc>() ? sl<FavoriteBloc>() : null;
+    }
+  }
+
+  FavoriteBloc? _readFavoriteBloc(BuildContext context) {
+    try {
+      return context.read<FavoriteBloc>();
+    } catch (_) {
+      return sl.isRegistered<FavoriteBloc>() ? sl<FavoriteBloc>() : null;
+    }
+  }
+
+  playlist_song.SongEntity _toPlaylistSong(SongEntity song) {
+    return playlist_song.SongEntity(
+      id: song.id,
+      title: song.title,
+      artist: song.artist,
+      fileUrl: song.fileUrl,
+      coverUrl: song.coverUrl,
+      album: song.album,
+      durationSec: song.durationSec,
+    );
   }
 
   void _openAddToPlaylist(BuildContext context, SongEntity song) {
@@ -141,7 +183,20 @@ class _HomeViewState extends State<_HomeView> {
     return Scaffold(
       backgroundColor: context.theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: BlocBuilder<HomeBloc, HomeState>(
+        child: BlocConsumer<HomeBloc, HomeState>(
+          listener: (context, state) {
+            if (state is HomeLoaded && state.allSongs.isNotEmpty) {
+              final ids = state.allSongs
+                  .map((s) => s.id)
+                  .where((id) => id.isNotEmpty)
+                  .toList();
+              if (ids.isNotEmpty) {
+                _readFavoriteBloc(
+                  context,
+                )?.add(CheckFavoriteSongsRequested(ids));
+              }
+            }
+          },
           builder: (context, state) {
             return RefreshIndicator(
               color: colorScheme.primary,
@@ -150,7 +205,6 @@ class _HomeViewState extends State<_HomeView> {
                 context.read<HomeBloc>().add(const HomeRefreshRequested());
               },
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.symmetric(
@@ -204,31 +258,53 @@ class _HomeViewState extends State<_HomeView> {
 
     List<SongEntity> allSongs = [];
     List<SongEntity> filteredSongs = [];
+    List<SongEntity> recommendedSongs = [];
     bool isSearching = false;
 
     if (state is HomeLoaded) {
       allSongs = state.allSongs;
       filteredSongs = state.filteredSongs;
+      recommendedSongs = state.recommendedSongs;
       isSearching = state.isSearching;
     } else if (state is HomeFailure && state.cachedSongs != null) {
       allSongs = state.cachedSongs!;
       filteredSongs = state.cachedSongs!;
+      recommendedSongs = state.cachedSongs!;
     }
+
+    final favBloc = _watchFavoriteBloc(context);
+    final favoriteSongIds =
+        favBloc?.state.favoriteSongIds ?? const <String>{};
 
     final onAdd = _hasPlaylistBloc(context)
         ? (SongEntity song) => _openAddToPlaylist(context, song)
         : null;
+    final onToggleFav = favBloc != null
+        ? (SongEntity song) => favBloc.add(
+            ToggleFavoriteSongRequested(
+              songId: song.id,
+              song: _toPlaylistSong(song),
+            ),
+          )
+        : null;
 
     if (isSearching) {
-      return AllSongsSection(
+      return RecommendSongsSection(
         songs: filteredSongs,
         isSearching: true,
-        onSongTap: (song) => _onPlaySongEntity(context, song, filteredSongs),
+        favoriteSongIds: favoriteSongIds,
+        onToggleFavorite: onToggleFav,
+        onSongTap: (song) => _onPlaySongEntity(
+          context,
+          song,
+          filteredSongs,
+          favoriteSongIds: favoriteSongIds,
+        ),
         onAddToPlaylist: onAdd,
       );
     }
 
-    final recentSongs = allSongs.take(8).map((s) => s.toSongModel()).toList();
+    final recentSongs = allSongs.take(5).map((s) => s.toSongModel()).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,14 +312,29 @@ class _HomeViewState extends State<_HomeView> {
         if (recentSongs.isNotEmpty) ...[
           RecentlyPlayedSection(
             songs: recentSongs,
-            onSongTap: (song) => _onPlaySongModel(context, song, recentSongs),
+            onSongTap: (song) => _onPlaySongModel(
+              context,
+              song,
+              recentSongs,
+              favoriteSongIds: favoriteSongIds,
+            ),
           ),
           const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
         ],
-        AllSongsSection(
-          songs: allSongs,
+        RecommendSongsSection(
+          songs: recommendedSongs,
           isSearching: false,
-          onSongTap: (song) => _onPlaySongEntity(context, song, allSongs),
+          favoriteSongIds: favoriteSongIds,
+          onToggleFavorite: onToggleFav,
+          onShuffle: () => context.read<HomeBloc>().add(
+            const HomeShuffleRecommendationsRequested(),
+          ),
+          onSongTap: (song) => _onPlaySongEntity(
+            context,
+            song,
+            recommendedSongs,
+            favoriteSongIds: favoriteSongIds,
+          ),
           onAddToPlaylist: onAdd,
         ),
       ],

@@ -5,6 +5,7 @@ class ApiConstants {
 
   static const String baseUrl = 'Your backend url';
 
+  // local
   // static String get baseUrl {
   //   if (kIsWeb) return 'http://localhost:8080'; // Web
   //   if (defaultTargetPlatform == TargetPlatform.android) {
@@ -12,5 +13,4 @@ class ApiConstants {
   //   }
   //   return 'http://localhost:8080'; // iOS Simulator / Desktop
   // }
-
 }

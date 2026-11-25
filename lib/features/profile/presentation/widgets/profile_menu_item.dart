@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_tokens.dart';
-import '../../../../core/widgets/app_card.dart';
 
 class ProfileMenuItem extends StatelessWidget {
   final IconData icon;
@@ -30,57 +29,75 @@ class ProfileMenuItem extends StatelessWidget {
     final iconBg = isDestructive
         ? colorScheme.error.withValues(alpha: 0.12)
         : appColors.inputFill;
+    final iconBorder = isDestructive
+        ? colorScheme.error.withValues(alpha: 0.28)
+        : appColors.subtleBorder;
     final titleColor = isDestructive
         ? colorScheme.error
         : colorScheme.onSurface;
+    final highlight = colorScheme.onSurface.withValues(alpha: 0.05);
 
-    return AppCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md + 2,
-      ),
-      onTap: onTap,
-      semanticLabel: subtitle != null ? '$title, $subtitle' : title,
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.sm + 2),
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(AppRadius.md),
+    return Semantics(
+      button: true,
+      label: subtitle != null ? '$title, $subtitle' : title,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          highlightColor: highlight,
+          splashColor: highlight,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md + 2,
             ),
-            child: Icon(icon, color: iconColor, size: 20),
-          ),
-          const SizedBox(width: AppSpacing.md + 2),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  title,
-                  style: textTheme.titleMedium?.copyWith(color: titleColor),
-                ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle!,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: appColors.textMuted,
-                    ),
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                    border: Border.all(color: iconBorder, width: 1),
                   ),
-                ],
+                  child: Icon(icon, color: iconColor, size: 18),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: titleColor,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle!,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: appColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (trailing != null)
+                  trailing!
+                else if (!isDestructive)
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: appColors.textMuted,
+                    size: 18,
+                  ),
               ],
             ),
           ),
-          if (trailing != null)
-            trailing!
-          else if (!isDestructive)
-            Icon(
-              Icons.chevron_right_rounded,
-              color: appColors.textMuted,
-              size: 20,
-            ),
-        ],
+        ),
       ),
     );
   }

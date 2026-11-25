@@ -7,6 +7,8 @@ import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/l10n/bloc/locale_bloc.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/bloc/theme_bloc.dart';
+import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_dialog.dart';
 import '../../../../core/widgets/app_state_view.dart';
 import '../../../../core/widgets/app_top_bar.dart';
@@ -143,6 +145,79 @@ class _ProfileViewState extends State<_ProfileView> {
     );
   }
 
+  void _showThemeDialog(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) {
+        ThemeMode currentMode = ThemeMode.system;
+        try {
+          currentMode = context.read<ThemeBloc>().state.themeMode;
+        } catch (_) {}
+
+        final options = [
+          (
+            mode: ThemeMode.system,
+            icon: Icons.brightness_auto_rounded,
+            label: context.l10n.themeModeSystem,
+          ),
+          (
+            mode: ThemeMode.dark,
+            icon: Icons.dark_mode_rounded,
+            label: context.l10n.themeModeDark,
+          ),
+          (
+            mode: ThemeMode.light,
+            icon: Icons.light_mode_rounded,
+            label: context.l10n.themeModeLight,
+          ),
+        ];
+
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(
+                Icons.dark_mode_rounded,
+                color: colorScheme.primary,
+                size: 22,
+              ),
+              const SizedBox(width: AppSpacing.sm + 2),
+              Expanded(
+                child: Text(
+                  context.l10n.selectThemeMode,
+                  style: textTheme.titleLarge,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final option in options)
+                ListTile(
+                  leading: Icon(option.icon, color: colorScheme.onSurface),
+                  title: Text(option.label, style: textTheme.bodyLarge),
+                  trailing: currentMode == option.mode
+                      ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                      : null,
+                  onTap: () {
+                    try {
+                      context.read<ThemeBloc>().add(
+                        ThemeChangeRequested(option.mode),
+                      );
+                    } catch (_) {}
+                    Navigator.of(dialogCtx).pop();
+                  },
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appColors = context.appColors;
@@ -205,6 +280,19 @@ class _ProfileViewState extends State<_ProfileView> {
             ? context.l10n.english
             : context.l10n.vietnamese;
 
+        ThemeMode currentThemeMode = ThemeMode.system;
+        try {
+          currentThemeMode = context.watch<ThemeBloc>().state.themeMode;
+        } catch (_) {}
+        final isDarkEffective = currentThemeMode == ThemeMode.dark ||
+            (currentThemeMode == ThemeMode.system &&
+                Theme.of(context).brightness == Brightness.dark);
+        final themeSubtitle = switch (currentThemeMode) {
+          ThemeMode.dark => context.l10n.themeModeDark,
+          ThemeMode.light => context.l10n.themeModeLight,
+          ThemeMode.system => context.l10n.themeModeSystem,
+        };
+
         return Scaffold(
           backgroundColor: context.theme.scaffoldBackgroundColor,
           appBar: AppTopBar(
@@ -259,42 +347,102 @@ class _ProfileViewState extends State<_ProfileView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ProfileHeaderCard(profile: profile),
-                                  const SizedBox(height: AppSpacing.xl),
-                                  ProfileMenuItem(
-                                    icon: Icons.person_outline_rounded,
-                                    title: context.l10n.editProfile,
-                                    subtitle: context.l10n.editProfileSubtitle,
-                                    onTap: () {
-                                      EditProfileBottomSheet.show(
-                                        context,
-                                        profile!,
-                                      );
-                                    },
-                                  ),
                                   const SizedBox(height: AppSpacing.lg),
-                                  ProfileMenuItem(
-                                    icon: Icons.history_rounded,
-                                    title: context.l10n.playbackHistory,
-                                    subtitle:
-                                        context.l10n.playbackHistorySubtitle,
-                                    onTap: () {
-                                      context.push('/profile/history');
-                                    },
+                                  AppCard(
+                                    showBorder: true,
+                                    padding: EdgeInsets.zero,
+                                    borderRadius: AppRadius.lg,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadius.lg,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          ProfileMenuItem(
+                                            icon: Icons.person_outline_rounded,
+                                            title: context.l10n.editProfile,
+                                            subtitle: context
+                                                .l10n.editProfileSubtitle,
+                                            onTap: () {
+                                              EditProfileBottomSheet.show(
+                                                context,
+                                                profile!,
+                                              );
+                                            },
+                                          ),
+                                          Divider(
+                                            height: 1,
+                                            indent: AppSpacing.lg,
+                                            endIndent: AppSpacing.lg,
+                                            color: appColors.subtleBorder,
+                                          ),
+                                          ProfileMenuItem(
+                                            icon: Icons.history_rounded,
+                                            title: context.l10n.playbackHistory,
+                                            subtitle: context
+                                                .l10n.playbackHistorySubtitle,
+                                            onTap: () {
+                                              context.push('/profile/history');
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  const SizedBox(height: AppSpacing.lg),
-                                  ProfileMenuItem(
-                                    icon: Icons.language_rounded,
-                                    title: context.l10n.language,
-                                    subtitle: languageSubtitle,
-                                    onTap: () => _showLanguageDialog(context),
+                                  const SizedBox(height: AppSpacing.md),
+                                  AppCard(
+                                    showBorder: true,
+                                    padding: EdgeInsets.zero,
+                                    borderRadius: AppRadius.lg,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadius.lg,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          ProfileMenuItem(
+                                            icon: Icons.language_rounded,
+                                            title: context.l10n.language,
+                                            subtitle: languageSubtitle,
+                                            onTap: () =>
+                                                _showLanguageDialog(context),
+                                          ),
+                                          Divider(
+                                            height: 1,
+                                            indent: AppSpacing.lg,
+                                            endIndent: AppSpacing.lg,
+                                            color: appColors.subtleBorder,
+                                          ),
+                                          ProfileMenuItem(
+                                            icon: isDarkEffective
+                                                ? Icons.dark_mode_rounded
+                                                : Icons.light_mode_rounded,
+                                            title: context.l10n.darkMode,
+                                            subtitle: themeSubtitle,
+                                            onTap: () =>
+                                                _showThemeDialog(context),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  const SizedBox(height: AppSpacing.lg),
-                                  ProfileMenuItem(
-                                    icon: Icons.logout_rounded,
-                                    title: context.l10n.logout,
-                                    subtitle: context.l10n.logoutSubtitle,
-                                    isDestructive: true,
-                                    onTap: () => _showLogoutDialog(context),
+                                  const SizedBox(height: AppSpacing.md),
+                                  AppCard(
+                                    showBorder: true,
+                                    padding: EdgeInsets.zero,
+                                    borderRadius: AppRadius.lg,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadius.lg,
+                                      ),
+                                      child: ProfileMenuItem(
+                                        icon: Icons.logout_rounded,
+                                        title: context.l10n.logout,
+                                        subtitle: context.l10n.logoutSubtitle,
+                                        isDestructive: true,
+                                        onTap: () => _showLogoutDialog(context),
+                                      ),
+                                    ),
                                   ),
                                   const SizedBox(height: AppSpacing.xxl),
                                 ],

@@ -28,74 +28,83 @@ class PlayerControls extends StatelessWidget {
     final colorScheme = context.colorScheme;
     final appColors = context.appColors;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            tooltip: 'Shuffle',
-            icon: Icon(
-              Icons.shuffle_rounded,
-              size: 22,
-              color: isShuffle ? colorScheme.primary : appColors.textMuted,
-            ),
-            onPressed: onShuffleToggle,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          tooltip: 'Shuffle',
+          style: IconButton.styleFrom(
+            backgroundColor: isShuffle ? appColors.inputFill : null,
+            side: isShuffle
+                ? BorderSide(color: appColors.subtleBorder, width: 1)
+                : null,
           ),
-          IconButton(
-            tooltip: 'Previous',
-            icon: Icon(
-              Icons.skip_previous_rounded,
-              size: 32,
-              color: colorScheme.onSurface,
-            ),
-            onPressed: onPrevious,
+          icon: Icon(
+            Icons.shuffle_rounded,
+            size: 20,
+            color: isShuffle ? colorScheme.primary : appColors.textMuted,
           ),
-          Semantics(
-            button: true,
-            label: isPlaying ? 'Pause' : 'Play',
-            child: Material(
-              color: colorScheme.primary,
-              shape: const CircleBorder(),
-              child: InkWell(
-                customBorder: const CircleBorder(),
-                onTap: onPlayPause,
-                child: SizedBox(
-                  width: 64,
-                  height: 64,
-                  child: Center(
-                    child: Icon(
-                      isPlaying
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      size: 36,
-                      color: colorScheme.onPrimary,
-                    ),
+          onPressed: onShuffleToggle,
+        ),
+        IconButton(
+          tooltip: 'Previous',
+          icon: Icon(
+            Icons.skip_previous_rounded,
+            size: 30,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: onPrevious,
+        ),
+        Semantics(
+          button: true,
+          label: isPlaying ? 'Pause' : 'Play',
+          child: Material(
+            color: colorScheme.primary,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: onPlayPause,
+              child: SizedBox(
+                width: 56,
+                height: 56,
+                child: Center(
+                  child: Icon(
+                    isPlaying
+                        ? Icons.pause_rounded
+                        : Icons.play_arrow_rounded,
+                    size: 28,
+                    color: colorScheme.onPrimary,
                   ),
                 ),
               ),
             ),
           ),
-          IconButton(
-            tooltip: 'Next',
-            icon: Icon(
-              Icons.skip_next_rounded,
-              size: 32,
-              color: colorScheme.onSurface,
-            ),
-            onPressed: onNext,
+        ),
+        IconButton(
+          tooltip: 'Next',
+          icon: Icon(
+            Icons.skip_next_rounded,
+            size: 30,
+            color: colorScheme.onSurface,
           ),
-          IconButton(
-            tooltip: 'Repeat',
-            icon: Icon(
-              Icons.repeat_rounded,
-              size: 22,
-              color: isRepeat ? colorScheme.primary : appColors.textMuted,
-            ),
-            onPressed: onRepeatToggle,
+          onPressed: onNext,
+        ),
+        IconButton(
+          tooltip: 'Repeat',
+          style: IconButton.styleFrom(
+            backgroundColor: isRepeat ? appColors.inputFill : null,
+            side: isRepeat
+                ? BorderSide(color: appColors.subtleBorder, width: 1)
+                : null,
           ),
-        ],
-      ),
+          icon: Icon(
+            Icons.repeat_rounded,
+            size: 20,
+            color: isRepeat ? colorScheme.primary : appColors.textMuted,
+          ),
+          onPressed: onRepeatToggle,
+        ),
+      ],
     );
   }
 }
