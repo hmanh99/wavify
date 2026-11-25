@@ -463,6 +463,21 @@ class AppLocalizationsVi extends AppLocalizations {
   String get languageSubtitle => 'Tiếng Việt';
 
   @override
+  String get darkMode => 'Nền tối';
+
+  @override
+  String get selectThemeMode => 'Chế độ hiển thị';
+
+  @override
+  String get themeModeSystem => 'Theo hệ thống';
+
+  @override
+  String get themeModeDark => 'Tối';
+
+  @override
+  String get themeModeLight => 'Sáng';
+
+  @override
   String get logout => 'Đăng xuất';
 
   @override
@@ -510,4 +525,53 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get clearHistoryConfirmMessage =>
       'Toàn bộ lịch sử nghe nhạc của bạn sẽ bị xóa. Bạn có chắc chắn muốn tiếp tục?';
+
+  @override
+  String get addToFavorites => 'Thêm vào yêu thích';
+
+  @override
+  String get removeFromFavorites => 'Bỏ yêu thích';
+
+  @override
+  String get favoritePlaylists => 'Playlist yêu thích';
+
+  @override
+  String get noFavoritePlaylists => 'Chưa có playlist yêu thích';
+
+  @override
+  String get noFavoritePlaylistsDesc =>
+      'Nhấn yêu thích playlist để lưu tại đây';
+
+  @override
+  String get discoverPlaylists => 'Khám phá';
+
+  @override
+  String get discoverPublicPlaylists => 'Khám phá Playlist công khai';
+
+  @override
+  String get searchPlaylistsHint => 'Tìm kiếm playlist theo tên...';
+
+  @override
+  String get noPublicPlaylistsFound => 'Không tìm thấy playlist công khai nào';
+
+  @override
+  String get addedToFavorites => 'Đã thêm vào yêu thích';
+
+  @override
+  String get removedFromFavorites => 'Đã bỏ khỏi yêu thích';
+
+  @override
+  String get recommendedSongs => 'Đề xuất cho bạn';
+
+  @override
+  String get shuffleRecommendations => 'Đổi bài';
+
+  @override
+  String get seeMore => 'Xem thêm';
+
+  @override
+  String get allFavoritesTitle => 'Tất cả yêu thích';
+
+  @override
+  String get searchFavoritesHint => 'Tìm bài hát hoặc playlist yêu thích...';
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wavify/core/theme/app_theme.dart';
-import 'package:wavify/features/playlist/presentation/pages/favourite_page.dart';
-import 'package:wavify/features/playlist/presentation/widgets/favourite_albums_section.dart';
-import 'package:wavify/features/playlist/presentation/widgets/favourite_artists_section.dart';
-import 'package:wavify/features/playlist/presentation/widgets/favourite_music_grid.dart';
+import 'package:wavify/features/favorite/presentation/pages/favourite_page.dart';
+import 'package:wavify/features/favorite/presentation/widgets/favourite_albums_section.dart';
+import 'package:wavify/features/favorite/presentation/widgets/favourite_artists_section.dart';
+import 'package:wavify/features/favorite/presentation/widgets/favourite_music_grid.dart';
 import 'package:wavify/features/listen/presentation/widgets/player_header.dart';
 
 void main() {

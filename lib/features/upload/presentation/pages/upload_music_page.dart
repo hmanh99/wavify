@@ -264,7 +264,12 @@ class _UploadMusicViewState extends State<_UploadMusicView>
                             const SizedBox(height: AppSpacing.sm + 2),
                             AppCard(
                               showBorder: true,
-                              padding: const EdgeInsets.all(AppSpacing.xl),
+                              color: appColors.cardSurface,
+                              borderRadius: AppRadius.lg,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.xl,
+                                vertical: AppSpacing.xl,
+                              ),
                               onTap: isUploading ? null : _onPickAudio,
                               semanticLabel: context.l10n.chooseAudioFile,
                               child: SizedBox(
@@ -272,17 +277,23 @@ class _UploadMusicViewState extends State<_UploadMusicView>
                                 child: Column(
                                   children: [
                                     Container(
-                                      width: 56,
-                                      height: 56,
+                                      width: 44,
+                                      height: 44,
                                       decoration: BoxDecoration(
                                         color: appColors.inputFill,
-                                        shape: BoxShape.circle,
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.md,
+                                        ),
+                                        border: Border.all(
+                                          color: appColors.subtleBorder,
+                                          width: 1,
+                                        ),
                                       ),
                                       child: Icon(
                                         _selectedAudioFileName != null
-                                            ? Icons.check_circle_rounded
-                                            : Icons.cloud_upload_rounded,
-                                        size: 28,
+                                            ? Icons.check_rounded
+                                            : Icons.cloud_upload_outlined,
+                                        size: 22,
                                         color: colorScheme.primary,
                                       ),
                                     ),
@@ -309,138 +320,199 @@ class _UploadMusicViewState extends State<_UploadMusicView>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: AppSpacing.xl),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Wrap(
-                                alignment: WrapAlignment.spaceBetween,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                spacing: AppSpacing.sm,
-                                runSpacing: AppSpacing.xs,
+                            const SizedBox(height: AppSpacing.lg),
+                            AppCard(
+                              showBorder: true,
+                              borderRadius: AppRadius.lg,
+                              padding: const EdgeInsets.all(AppSpacing.lg),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    context.l10n.coverImage,
-                                    style: textTheme.titleMedium,
-                                  ),
-                                  TextButton.icon(
-                                    onPressed: isUploading ? null : _onPickCover,
-                                    icon: Icon(
-                                      Icons.image_rounded,
-                                      size: 18,
-                                      color: colorScheme.primary,
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Wrap(
+                                      alignment: WrapAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      spacing: AppSpacing.sm,
+                                      runSpacing: AppSpacing.xs,
+                                      children: [
+                                        Text(
+                                          context.l10n.coverImage,
+                                          style: textTheme.titleMedium,
+                                        ),
+                                        TextButton.icon(
+                                          onPressed: isUploading
+                                              ? null
+                                              : _onPickCover,
+                                          icon: Icon(
+                                            Icons.image_rounded,
+                                            size: 18,
+                                            color: colorScheme.primary,
+                                          ),
+                                          label: Text(
+                                            _selectedCoverFileName != null
+                                                ? context.l10n.changeCoverImage
+                                                : context.l10n.chooseCoverImage,
+                                            style: textTheme.labelLarge
+                                                ?.copyWith(
+                                                  color: colorScheme.primary,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    label: Text(
-                                      _selectedCoverFileName != null
-                                          ? context.l10n.changeCoverImage
-                                          : context.l10n.chooseCoverImage,
-                                      style: textTheme.labelLarge?.copyWith(
-                                        color: colorScheme.primary,
+                                  ),
+                                  if (_selectedCoverFileName != null) ...[
+                                    const SizedBox(height: AppSpacing.sm),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: appColors.inputFill,
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.md,
+                                        ),
+                                        border: Border.all(
+                                          color: appColors.subtleBorder,
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.md,
+                                        vertical: AppSpacing.sm,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          if (_selectedCoverBytes != null)
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                    AppRadius.sm,
+                                                  ),
+                                              child: Image.memory(
+                                                _selectedCoverBytes!,
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                          else
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                color: appColors.cardSurface,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      AppRadius.sm,
+                                                    ),
+                                                border: Border.all(
+                                                  color: appColors.subtleBorder,
+                                                ),
+                                              ),
+                                              child: Icon(
+                                                Icons.photo_outlined,
+                                                color: colorScheme.primary,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          const SizedBox(width: AppSpacing.md),
+                                          Expanded(
+                                            child: Text(
+                                              _selectedCoverFileName!,
+                                              style: textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                    color:
+                                                        colorScheme.onSurface,
+                                                  ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            tooltip: context.l10n.cancel,
+                                            icon: Icon(
+                                              Icons.close_rounded,
+                                              size: 18,
+                                              color: appColors.textMuted,
+                                            ),
+                                            onPressed: () => setState(() {
+                                              _selectedCoverPath = null;
+                                              _selectedCoverBytes = null;
+                                              _selectedCoverFileName = null;
+                                            }),
+                                          ),
+                                        ],
                                       ),
                                     ),
+                                  ],
+                                  Divider(
+                                    height: AppSpacing.xl,
+                                    color: appColors.subtleBorder,
+                                  ),
+                                  Text(
+                                    context.l10n.songInfo,
+                                    style: textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(height: AppSpacing.md),
+                                  AppTextField(
+                                    label: context.l10n.songTitle,
+                                    controller: _titleController,
+                                    textInputAction: TextInputAction.next,
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.trim().isEmpty) {
+                                        return context
+                                            .l10n
+                                            .pleaseEnterSongTitle;
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: AppSpacing.md + 2),
+                                  AppTextField(
+                                    label: context.l10n.artist,
+                                    controller: _artistController,
+                                    textInputAction: TextInputAction.next,
+                                  ),
+                                  const SizedBox(height: AppSpacing.md + 2),
+                                  AppTextField(
+                                    label: context.l10n.albumOptional,
+                                    controller: _albumController,
+                                    textInputAction: TextInputAction.done,
+                                  ),
+                                  Divider(
+                                    height: AppSpacing.xl,
+                                    color: appColors.subtleBorder,
+                                  ),
+                                  Text(
+                                    context.l10n.visibility,
+                                    style: textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(height: AppSpacing.sm + 2),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: _VisibilityChip(
+                                          icon: Icons.public_rounded,
+                                          label: context.l10n.public,
+                                          isSelected: _isPublic,
+                                          onTap: () =>
+                                              setState(() => _isPublic = true),
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSpacing.md),
+                                      Expanded(
+                                        child: _VisibilityChip(
+                                          icon: Icons.lock_outline_rounded,
+                                          label: context.l10n.private,
+                                          isSelected: !_isPublic,
+                                          onTap: () =>
+                                              setState(() => _isPublic = false),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ),
-                            if (_selectedCoverFileName != null) ...[
-                              const SizedBox(height: AppSpacing.sm),
-                              AppCard(
-                                showBorder: true,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.md + 2,
-                                  vertical: AppSpacing.sm,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.photo_rounded,
-                                      color: colorScheme.primary,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: AppSpacing.sm + 2),
-                                    Expanded(
-                                      child: Text(
-                                        _selectedCoverFileName!,
-                                        style: textTheme.bodyMedium?.copyWith(
-                                          color: colorScheme.onSurface,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: context.l10n.cancel,
-                                      icon: Icon(
-                                        Icons.close_rounded,
-                                        size: 18,
-                                        color: appColors.textMuted,
-                                      ),
-                                      onPressed: () => setState(() {
-                                        _selectedCoverPath = null;
-                                        _selectedCoverBytes = null;
-                                        _selectedCoverFileName = null;
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            const SizedBox(height: AppSpacing.xl),
-                            Text(
-                              context.l10n.songInfo,
-                              style: textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            AppTextField(
-                              label: context.l10n.songTitle,
-                              controller: _titleController,
-                              textInputAction: TextInputAction.next,
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return context.l10n.pleaseEnterSongTitle;
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: AppSpacing.md + 2),
-                            AppTextField(
-                              label: context.l10n.artist,
-                              controller: _artistController,
-                              textInputAction: TextInputAction.next,
-                            ),
-                            const SizedBox(height: AppSpacing.md + 2),
-                            AppTextField(
-                              label: context.l10n.albumOptional,
-                              controller: _albumController,
-                              textInputAction: TextInputAction.done,
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            Text(
-                              context.l10n.visibility,
-                              style: textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: AppSpacing.sm + 2),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _VisibilityChip(
-                                    icon: Icons.public_rounded,
-                                    label: context.l10n.public,
-                                    isSelected: _isPublic,
-                                    onTap: () =>
-                                        setState(() => _isPublic = true),
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.md),
-                                Expanded(
-                                  child: _VisibilityChip(
-                                    icon: Icons.lock_outline_rounded,
-                                    label: context.l10n.private,
-                                    isSelected: !_isPublic,
-                                    onTap: () =>
-                                        setState(() => _isPublic = false),
-                                  ),
-                                ),
-                              ],
                             ),
                             const SizedBox(height: AppSpacing.xl),
                             if (isUploading) ...[
@@ -529,9 +601,7 @@ class _VisibilityChip extends StatelessWidget {
       selected: isSelected,
       label: label,
       child: Material(
-        color: isSelected
-            ? colorScheme.primary.withValues(alpha: 0.12)
-            : appColors.cardSurface,
+        color: isSelected ? appColors.inputFill : appColors.cardSurface,
         borderRadius: radius,
         child: InkWell(
           borderRadius: radius,

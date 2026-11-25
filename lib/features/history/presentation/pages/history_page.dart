@@ -195,127 +195,167 @@ class _HistoryViewState extends State<_HistoryView> {
                     const HistoryLoadRequested(isRefresh: true),
                   );
                 },
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 720),
-                    child: ListView.separated(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.md,
-                      ),
-                      itemCount: historyList.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: AppSpacing.sm + 2),
-                      itemBuilder: (context, index) {
-                        final item = historyList[index];
-                        final song = item.song;
-
-                        return Dismissible(
-                          key: Key('hist_${item.id}'),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(
-                              right: AppSpacing.lg + AppSpacing.xs,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.error,
-                              borderRadius: BorderRadius.circular(AppRadius.lg),
-                            ),
-                            child: Icon(
-                              Icons.delete_outline_rounded,
-                              color: colorScheme.onError,
-                            ),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 720),
+                      child: AppCard(
+                        showBorder: true,
+                        borderRadius: AppRadius.lg,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.xs,
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: historyList.length,
+                          separatorBuilder: (_, _) => Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: appColors.subtleBorder,
                           ),
-                          onDismissed: (_) {
-                            context.read<HistoryBloc>().add(
-                              HistoryDeleteItemRequested(item.id),
-                            );
-                          },
-                          child: AppCard(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: AppSpacing.sm + 2,
-                            ),
-                            onTap: () =>
-                                _playFromHistory(context, historyList, index),
-                            semanticLabel: '${song.title}, ${song.artist}',
-                            child: Row(
-                              children: [
-                                MusicArtwork(
-                                  imageUrl: song.coverUrl,
-                                  title: song.title,
-                                  artist: song.artist,
-                                  width: 52,
-                                  height: 52,
-                                  borderRadius: AppRadius.sm + 2,
+                          itemBuilder: (context, index) {
+                            final item = historyList[index];
+                            final song = item.song;
+
+                            return Dismissible(
+                              key: Key('hist_${item.id}'),
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(
+                                  right: AppSpacing.lg + AppSpacing.xs,
                                 ),
-                                const SizedBox(width: AppSpacing.md),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        song.title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      const SizedBox(height: AppSpacing.xs),
-                                      Text(
-                                        '${song.artist} • ${_formatPlayedAt(context, item.playedAt)}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: textTheme.bodySmall?.copyWith(
-                                          color: appColors.textMuted,
-                                        ),
-                                      ),
-                                    ],
+                                decoration: BoxDecoration(
+                                  color: colorScheme.error,
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.md,
                                   ),
                                 ),
-                                PopupMenuButton<String>(
-                                  tooltip: context.l10n.delete,
-                                  icon: Icon(
-                                    Icons.more_vert_rounded,
-                                    color: appColors.textMuted,
-                                    size: 20,
-                                  ),
-                                  onSelected: (value) {
-                                    if (value == 'delete') {
-                                      context.read<HistoryBloc>().add(
-                                        HistoryDeleteItemRequested(item.id),
-                                      );
-                                    }
-                                  },
-                                  itemBuilder: (_) => [
-                                    PopupMenuItem(
-                                      value: 'delete',
+                                child: Icon(
+                                  Icons.delete_outline_rounded,
+                                  color: colorScheme.onError,
+                                ),
+                              ),
+                              onDismissed: (_) {
+                                context.read<HistoryBloc>().add(
+                                  HistoryDeleteItemRequested(item.id),
+                                );
+                              },
+                              child: Semantics(
+                                button: true,
+                                label: '${song.title}, ${song.artist}',
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadius.md,
+                                    ),
+                                    onTap: () => _playFromHistory(
+                                      context,
+                                      historyList,
+                                      index,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: AppSpacing.sm + 2,
+                                      ),
                                       child: Row(
                                         children: [
-                                          Icon(
-                                            Icons.delete_outline_rounded,
-                                            color: colorScheme.error,
-                                            size: 20,
+                                          MusicArtwork(
+                                            imageUrl: song.coverUrl,
+                                            title: song.title,
+                                            artist: song.artist,
+                                            width: 48,
+                                            height: 48,
+                                            borderRadius: AppRadius.sm,
                                           ),
-                                          const SizedBox(width: AppSpacing.sm),
-                                          Text(
-                                            context.l10n.delete,
-                                            style: TextStyle(
-                                              color: colorScheme.error,
+                                          const SizedBox(width: AppSpacing.md),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  song.title,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: textTheme.titleMedium,
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  '${song.artist} • ${_formatPlayedAt(context, item.playedAt)}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: textTheme.bodySmall
+                                                      ?.copyWith(
+                                                        color:
+                                                            appColors.textMuted,
+                                                      ),
+                                                ),
+                                              ],
                                             ),
+                                          ),
+                                          PopupMenuButton<String>(
+                                            tooltip: context.l10n.delete,
+                                            icon: Icon(
+                                              Icons.more_horiz_rounded,
+                                              color: appColors.textMuted,
+                                              size: 20,
+                                            ),
+                                            onSelected: (value) {
+                                              if (value == 'delete') {
+                                                context.read<HistoryBloc>().add(
+                                                  HistoryDeleteItemRequested(
+                                                    item.id,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            itemBuilder: (_) => [
+                                              PopupMenuItem(
+                                                value: 'delete',
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons
+                                                          .delete_outline_rounded,
+                                                      color: colorScheme.error,
+                                                      size: 20,
+                                                    ),
+                                                    const SizedBox(
+                                                      width: AppSpacing.sm,
+                                                    ),
+                                                    Text(
+                                                      context.l10n.delete,
+                                                      style: TextStyle(
+                                                        color:
+                                                            colorScheme.error,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ),

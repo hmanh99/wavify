@@ -24,29 +24,30 @@ class PlayerProgressBar extends StatelessWidget {
 
     return Column(
       children: [
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            trackHeight: 3.5,
-            activeTrackColor: colorScheme.primary,
-            inactiveTrackColor: appColors.subtleBorder,
-            thumbColor: colorScheme.primary,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.5),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-            overlayColor: colorScheme.primary.withValues(alpha: 0.16),
-          ),
-          child: Slider(
-            value: currentSec,
-            min: 0,
-            max: maxSec,
-            onChanged: (value) {
-              onSeek(Duration(seconds: value.toInt()));
-            },
+        SizedBox(
+          height: 48,
+          child: SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              trackHeight: 2.5,
+              activeTrackColor: colorScheme.primary,
+              inactiveTrackColor: appColors.subtleBorder,
+              thumbColor: colorScheme.primary,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+              overlayColor: colorScheme.primary.withValues(alpha: 0.14),
+            ),
+            child: Slider(
+              value: currentSec,
+              min: 0,
+              max: maxSec,
+              onChanged: (value) {
+                onSeek(Duration(seconds: value.toInt()));
+              },
+            ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg + AppSpacing.xs,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,6 +56,7 @@ class PlayerProgressBar extends StatelessWidget {
                 style: textTheme.bodySmall?.copyWith(
                   color: appColors.textMuted,
                   fontWeight: FontWeight.w600,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
               Text(
@@ -62,6 +64,7 @@ class PlayerProgressBar extends StatelessWidget {
                 style: textTheme.bodySmall?.copyWith(
                   color: appColors.textMuted,
                   fontWeight: FontWeight.w600,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
             ],

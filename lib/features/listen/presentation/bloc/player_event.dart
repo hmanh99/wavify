@@ -83,3 +83,12 @@ class PlayerRepeatToggled extends PlayerEvent {
 class PlayerFavoriteToggled extends PlayerEvent {
   const PlayerFavoriteToggled();
 }
+
+class PlayerFavoritesSynced extends PlayerEvent {
+  final Set<String> favouriteSongIds;
+
+  const PlayerFavoritesSynced(this.favouriteSongIds);
+
+  @override
+  List<Object?> get props => [favouriteSongIds];
+}

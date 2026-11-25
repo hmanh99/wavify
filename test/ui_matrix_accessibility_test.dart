@@ -21,6 +21,7 @@ import 'package:wavify/features/auth/domain/usecases/register_usecase.dart';
 import 'package:wavify/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:wavify/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:wavify/features/auth/presentation/pages/sign_up_page.dart';
+import 'package:wavify/features/favorite/presentation/pages/all_favorites_page.dart';
 import 'package:wavify/features/history/domain/entities/history_entity.dart';
 import 'package:wavify/features/history/domain/entities/history_song_entity.dart';
 import 'package:wavify/features/history/domain/repositories/history_repository.dart';
@@ -42,25 +43,25 @@ import 'package:wavify/features/listen/data/models/song_model.dart';
 import 'package:wavify/features/listen/presentation/bloc/player_bloc.dart';
 import 'package:wavify/features/listen/presentation/bloc/player_state.dart';
 import 'package:wavify/features/listen/presentation/pages/listen_page.dart';
-import 'package:wavify/features/playlist/domain/entities/playlist_entity.dart';
-import 'package:wavify/features/playlist/domain/entities/song_entity.dart'
+import 'package:wavify/features/favorite/domain/entities/playlist_entity.dart';
+import 'package:wavify/features/favorite/domain/entities/song_entity.dart'
     as pl;
-import 'package:wavify/features/playlist/domain/repositories/playlist_repository.dart';
-import 'package:wavify/features/playlist/domain/usecases/add_song_to_playlist_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/add_songs_to_playlist_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/create_playlist_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/delete_playlist_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/get_my_playlists_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/get_playlist_detail_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/remove_song_from_playlist_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/reorder_playlist_songs_usecase.dart';
-import 'package:wavify/features/playlist/domain/usecases/update_playlist_usecase.dart';
-import 'package:wavify/features/playlist/presentation/bloc/playlist_bloc.dart';
-import 'package:wavify/features/playlist/presentation/bloc/playlist_state.dart';
-import 'package:wavify/features/playlist/presentation/pages/favourite_page.dart';
-import 'package:wavify/features/playlist/presentation/pages/playlist_detail_page.dart';
-import 'package:wavify/features/playlist/presentation/widgets/add_multiple_songs_bottom_sheet.dart';
-import 'package:wavify/features/playlist/presentation/widgets/create_edit_playlist_dialog.dart';
+import 'package:wavify/features/favorite/domain/repositories/playlist_repository.dart';
+import 'package:wavify/features/favorite/domain/usecases/add_song_to_playlist_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/add_songs_to_playlist_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/create_playlist_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/delete_playlist_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/get_my_playlists_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/get_playlist_detail_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/remove_song_from_playlist_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/reorder_playlist_songs_usecase.dart';
+import 'package:wavify/features/favorite/domain/usecases/update_playlist_usecase.dart';
+import 'package:wavify/features/favorite/presentation/bloc/playlist_bloc.dart';
+import 'package:wavify/features/favorite/presentation/bloc/playlist_state.dart';
+import 'package:wavify/features/favorite/presentation/pages/favourite_page.dart';
+import 'package:wavify/features/favorite/presentation/pages/playlist_detail_page.dart';
+import 'package:wavify/features/favorite/presentation/widgets/add_multiple_songs_bottom_sheet.dart';
+import 'package:wavify/features/favorite/presentation/widgets/create_edit_playlist_dialog.dart';
 import 'package:wavify/features/profile/domain/entities/user_profile_entity.dart';
 import 'package:wavify/features/profile/domain/repositories/profile_repository.dart';
 import 'package:wavify/features/profile/domain/usecases/get_profile_usecase.dart';
@@ -137,6 +138,12 @@ class _StubPlaylistRepo implements PlaylistRepository {
   }) async => _samplePlaylistSongs;
   @override
   Future<List<PlaylistEntity>> getMyPlaylists() async => [_samplePlaylist];
+  @override
+  Future<List<PlaylistEntity>> searchPublicPlaylists({
+    String? keyword,
+    int page = 0,
+    int size = 20,
+  }) async => [_samplePlaylist];
   @override
   Future<PlaylistEntity> getPlaylistById(String playlistId) async =>
       _samplePlaylist;
@@ -562,6 +569,7 @@ void main() {
       'HomePage': () => const HomePage(),
       'ListenPage': () => const ListenPage(),
       'FavouritePage': () => const FavouritePage(),
+      'AllFavoritesPage': () => const AllFavoritesPage(),
       'PlaylistDetailPage': () => const PlaylistDetailPage(playlistId: 'pl-1'),
       'UploadMusicPage': () => const UploadMusicPage(),
       'ProfilePage': () => const ProfilePage(),
@@ -714,6 +722,7 @@ void main() {
       'HomePage': () => const HomePage(),
       'ListenPage': () => const ListenPage(),
       'FavouritePage': () => const FavouritePage(),
+      'AllFavoritesPage': () => const AllFavoritesPage(),
       'PlaylistDetailPage': () => const PlaylistDetailPage(playlistId: 'pl-1'),
       'UploadMusicPage': () => const UploadMusicPage(),
       'ProfilePage': () => const ProfilePage(),

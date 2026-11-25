@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wavify/features/playlist/data/models/album_model.dart';
-import 'package:wavify/features/playlist/data/models/artist_model.dart';
-import 'package:wavify/features/playlist/data/models/song_model.dart';
+import 'package:wavify/features/favorite/data/models/album_model.dart';
+import 'package:wavify/features/favorite/data/models/artist_model.dart';
+import 'package:wavify/features/favorite/data/models/song_model.dart';
 import 'package:wavify/features/upload/domain/entities/song_entity.dart';
 
 void main() {

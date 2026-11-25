@@ -156,6 +156,14 @@ class _EditSongDialogState extends State<EditSongDialog> {
                   children: [
                     Expanded(
                       child: ChoiceChip(
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.sm + 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
                         label: Center(
                           child: Text(
                             context.l10n.publicVisibility,
@@ -165,13 +173,11 @@ class _EditSongDialogState extends State<EditSongDialog> {
                         ),
                         selected: _isPublic,
                         showCheckmark: false,
-                        selectedColor: colorScheme.primary.withValues(
-                          alpha: 0.14,
-                        ),
-                        backgroundColor: appColors.inputFill,
+                        selectedColor: appColors.inputFill,
+                        backgroundColor: appColors.cardSurface,
                         labelStyle: textTheme.bodySmall?.copyWith(
                           color: _isPublic
-                              ? colorScheme.primary
+                              ? colorScheme.onSurface
                               : appColors.textMuted,
                           fontWeight: _isPublic
                               ? FontWeight.w600
@@ -188,6 +194,14 @@ class _EditSongDialogState extends State<EditSongDialog> {
                     const SizedBox(width: AppSpacing.sm + 2),
                     Expanded(
                       child: ChoiceChip(
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.sm + 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
                         label: Center(
                           child: Text(
                             context.l10n.privateVisibility,
@@ -197,13 +211,11 @@ class _EditSongDialogState extends State<EditSongDialog> {
                         ),
                         selected: !_isPublic,
                         showCheckmark: false,
-                        selectedColor: colorScheme.primary.withValues(
-                          alpha: 0.14,
-                        ),
-                        backgroundColor: appColors.inputFill,
+                        selectedColor: appColors.inputFill,
+                        backgroundColor: appColors.cardSurface,
                         labelStyle: textTheme.bodySmall?.copyWith(
                           color: !_isPublic
-                              ? colorScheme.primary
+                              ? colorScheme.onSurface
                               : appColors.textMuted,
                           fontWeight: !_isPublic
                               ? FontWeight.w600

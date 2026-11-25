@@ -24,3 +24,6 @@ class HomeSearchQueryChanged extends HomeEvent {
   List<Object?> get props => [query];
 }
 
+class HomeShuffleRecommendationsRequested extends HomeEvent {
+  const HomeShuffleRecommendationsRequested();
+}

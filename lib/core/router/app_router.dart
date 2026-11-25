@@ -3,11 +3,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/sign_in_page.dart';
 import '../../features/auth/presentation/pages/sign_up_page.dart';
-import '../../features/playlist/presentation/pages/favourite_page.dart';
+import '../../features/favorite/presentation/pages/all_favorites_page.dart';
+import '../../features/favorite/presentation/pages/favourite_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/listen/presentation/pages/listen_page.dart';
-import '../../features/playlist/presentation/pages/playlist_detail_page.dart';
+import '../../features/favorite/presentation/pages/playlist_detail_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/upload/presentation/pages/upload_music_page.dart';
 import '../widgets/app_scaffold_with_nav_bar.dart';
@@ -20,6 +21,7 @@ class AppRouter {
   static const String signUp = '/sign-up';
   static const String home = '/home';
   static const String favourite = '/favourite';
+  static const String favouriteAll = '/favourite/all';
   static const String listen = '/listen';
   static const String upload = '/upload';
   static const String profile = '/profile';
@@ -50,6 +52,15 @@ class AppRouter {
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
           return PlaylistDetailPage(playlistId: id);
+        },
+      ),
+      GoRoute(
+        path: favouriteAll,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final tabParam = state.uri.queryParameters['tab'];
+          final initialTab = int.tryParse(tabParam ?? '0') ?? 0;
+          return AllFavoritesPage(initialTabIndex: initialTab);
         },
       ),
 

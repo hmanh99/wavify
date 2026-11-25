@@ -24,60 +24,70 @@ class RecommendSection extends StatelessWidget {
       children: [
         Text('Recommend for you', style: textTheme.titleLarge),
         const SizedBox(height: AppSpacing.md),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: songs.length,
-          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
-          itemBuilder: (context, index) {
-            final song = songs[index];
-            return AppCard(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              onTap: () => onSongTap(song),
-              child: Row(
-                children: [
-                  MusicArtwork(
-                    imageUrl: song.coverUrl,
-                    title: song.title,
-                    artist: song.artist,
-                    width: 64,
-                    height: 64,
-                    borderRadius: AppRadius.md,
-                  ),
-                  const SizedBox(width: AppSpacing.md + 2),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        AppCard(
+          showBorder: true,
+          borderRadius: AppRadius.lg,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.xs,
+          ),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: songs.length,
+            separatorBuilder: (_, _) =>
+                Divider(height: 1, thickness: 1, color: appColors.subtleBorder),
+            itemBuilder: (context, index) {
+              final song = songs[index];
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  onTap: () => onSongTap(song),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.sm + 2,
+                    ),
+                    child: Row(
                       children: [
-                        Text(
-                          song.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: textTheme.titleMedium,
+                        MusicArtwork(
+                          imageUrl: song.coverUrl,
+                          title: song.title,
+                          artist: song.artist,
+                          width: 48,
+                          height: 48,
+                          borderRadius: AppRadius.sm,
                         ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          song.artist,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: appColors.textMuted,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          song.streams ?? '100k / streams',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: appColors.textMuted,
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                song.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '${song.artist} • ${song.streams ?? '100k / streams'}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: appColors.textMuted,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
       ],
     );

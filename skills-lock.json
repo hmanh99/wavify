@@ -1,17 +1,31 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
+    "appllama-app-design-skill": {
+      "source": "Appllama/appllama-skills",
+      "commit": "7682d2c38224e35366029dfac57e22d64d17f9f8",
+      "sourceType": "github",
+      "skillPath": "skills/appllama-app-design-skill/SKILL.md",
+      "computedHash": "72e277fb3fd2baa1429824132269715feac74ab8cabbf7067a0fb1cddf666ffa"
+    },
+    "appllama-usage": {
+      "source": "Appllama/appllama-skills",
+      "commit": "7682d2c38224e35366029dfac57e22d64d17f9f8",
+      "sourceType": "github",
+      "skillPath": "skills/appllama-usage/SKILL.md",
+      "computedHash": "dcb5207e4f5a6d96728ca9173cd81f9671a57be735b58cc12edf0887261f5382"
+    },
     "design-taste-frontend": {
       "source": "Leonxlnx/taste-skill",
       "sourceType": "github",
       "skillPath": "skills/taste-skill/SKILL.md",
-      "computedHash": "53590ee9325bee34d7888bf0d81bd3941a108b1e7850df46802d93104e3f2b90"
+      "computedHash": "0094b3a70572d65b2c534ff811a780ae044621aac7a791ec6f70874c0a02f3d8"
     },
     "high-end-visual-design": {
       "source": "Leonxlnx/taste-skill-classics",
       "sourceType": "github",
       "skillPath": "skills/soft-skill/SKILL.md",
-      "computedHash": "6d03b1fc1798e13d0b5368b4a6135319503d6b9f39062ecfa0ddf8f6bc333508"
+      "computedHash": "35d686a6100bce47b3391e57ff69b3c5f77635728fafbd664109fbb6923f41f1"
     }
   }
 }

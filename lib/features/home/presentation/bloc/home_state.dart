@@ -19,18 +19,25 @@ class HomeLoading extends HomeState {
 class HomeLoaded extends HomeState {
   final List<SongEntity> allSongs;
   final List<SongEntity> filteredSongs;
+  final List<SongEntity> recommendedSongs;
   final String searchQuery;
 
   const HomeLoaded({
     required this.allSongs,
     required this.filteredSongs,
+    List<SongEntity>? recommendedSongs,
     this.searchQuery = '',
-  });
+  }) : recommendedSongs = recommendedSongs ?? allSongs;
 
   bool get isSearching => searchQuery.trim().isNotEmpty;
 
   @override
-  List<Object?> get props => [allSongs, filteredSongs, searchQuery];
+  List<Object?> get props => [
+    allSongs,
+    filteredSongs,
+    recommendedSongs,
+    searchQuery,
+  ];
 }
 
 class HomeFailure extends HomeState {
@@ -42,4 +49,3 @@ class HomeFailure extends HomeState {
   @override
   List<Object?> get props => [message, cachedSongs];
 }
-

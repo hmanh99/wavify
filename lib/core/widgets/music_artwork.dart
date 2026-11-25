@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_tokens.dart';
 import 'digital_artwork.dart';
 
 class MusicArtwork extends StatelessWidget {
@@ -19,7 +20,7 @@ class MusicArtwork extends StatelessWidget {
     this.artist,
     this.width = 120,
     this.height = 120,
-    this.borderRadius = 16,
+    this.borderRadius = AppRadius.md,
     this.fit = BoxFit.cover,
     this.iconSize,
     this.showBadge = true,
@@ -54,18 +55,36 @@ class MusicArtwork extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
-      child: Image.network(
-        imageUrl!.trim(),
-        width: width,
-        height: height,
-        fit: fit,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildDigitalArtwork();
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return _buildDigitalArtwork();
-        },
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          Image.network(
+            imageUrl!.trim(),
+            width: width,
+            height: height,
+            fit: fit,
+            errorBuilder: (context, error, stackTrace) {
+              return _buildDigitalArtwork();
+            },
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return _buildDigitalArtwork();
+            },
+          ),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  border: Border.all(
+                    color: context.appColors.subtleBorder,
+                    width: 0.75,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

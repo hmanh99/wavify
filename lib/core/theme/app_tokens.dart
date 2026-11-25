@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/colors_constant.dart';
 
 /// Spacing scale following a strict 4dp grid (4 / 8 / 12 / 16 / 24 / 32).
 class AppSpacing {
@@ -12,15 +13,15 @@ class AppSpacing {
   static const double xxl = 32.0;
 }
 
-/// Border radius tokens for consistent geometry across surfaces and controls.
+/// Crisp architectural border radius tokens for Utilitarian Minimalism.
 class AppRadius {
   AppRadius._();
 
   static const double xs = 4.0;
-  static const double sm = 8.0;
-  static const double md = 12.0;
-  static const double lg = 16.0;
-  static const double xl = 24.0;
+  static const double sm = 6.0;
+  static const double md = 8.0;
+  static const double lg = 12.0;
+  static const double xl = 16.0;
   static const double hundred = 100.0;
 }
 
@@ -69,29 +70,29 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   });
 
   static const AppSemanticColors dark = AppSemanticColors(
-    success: Color(0xFF34D399),
+    success: ColorsConstant.success,
     onSuccess: Color(0xFF052E16),
-    warning: Color(0xFFFBBF24),
+    warning: ColorsConstant.warning,
     onWarning: Color(0xFF1C1917),
-    cardSurface: Color(0xFF161619),
-    inputFill: Color(0xFF1F1F24),
-    subtleBorder: Color(0xFF2A2A30),
-    navBackground: Color(0xFF0E0E10),
-    textMuted: Color(0xFFA1A1AA),
-    overlay: Color(0xB8000000),
+    cardSurface: ColorsConstant.cardBackground,
+    inputFill: ColorsConstant.inputBackground,
+    subtleBorder: ColorsConstant.border,
+    navBackground: ColorsConstant.bottomNavBackground,
+    textMuted: ColorsConstant.textSecondary,
+    overlay: ColorsConstant.overlay,
   );
 
   static const AppSemanticColors light = AppSemanticColors(
-    success: Color(0xFF15803D),
-    onSuccess: Color(0xFFFFFFFF),
-    warning: Color(0xFFB45309),
-    onWarning: Color(0xFFFFFFFF),
-    cardSurface: Color(0xFFFFFFFF),
-    inputFill: Color(0xFFEFEFF3),
-    subtleBorder: Color(0xFFE2E2E8),
-    navBackground: Color(0xFFFFFFFF),
-    textMuted: Color(0xFF52525B),
-    overlay: Color(0xA6000000),
+    success: ColorsConstant.lightSuccess,
+    onSuccess: ColorsConstant.lightOnError,
+    warning: ColorsConstant.lightWarning,
+    onWarning: ColorsConstant.lightOnError,
+    cardSurface: ColorsConstant.lightCardBackground,
+    inputFill: ColorsConstant.lightInputBackground,
+    subtleBorder: ColorsConstant.lightBorder,
+    navBackground: ColorsConstant.lightCardBackground,
+    textMuted: ColorsConstant.lightTextSecondary,
+    overlay: Color(0xB80B0B0C),
   );
 
   @override

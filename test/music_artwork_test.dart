@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wavify/core/widgets/digital_artwork.dart';
 import 'package:wavify/core/widgets/music_artwork.dart';
-import 'package:wavify/features/home/presentation/widgets/all_songs_section.dart';
+import 'package:wavify/features/home/presentation/widgets/recommend_songs_section.dart';
 import 'package:wavify/features/listen/presentation/widgets/player_artwork.dart';
 import 'package:wavify/features/listen/data/models/song_model.dart';
 import 'package:wavify/features/upload/data/models/song_response_model.dart';
@@ -106,7 +106,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: AllSongsSection(
+            body: RecommendSongsSection(
               songs: const [songNoCover],
               onSongTap: (_) {},
             ),

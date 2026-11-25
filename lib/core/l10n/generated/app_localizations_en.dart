@@ -461,6 +461,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSubtitle => 'English';
 
   @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get selectThemeMode => 'Appearance';
+
+  @override
+  String get themeModeSystem => 'System default';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
   String get logout => 'Log Out';
 
   @override
@@ -507,4 +522,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get clearHistoryConfirmMessage =>
       'All your playback history will be deleted. Are you sure you want to proceed?';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String get favoritePlaylists => 'Favorite Playlists';
+
+  @override
+  String get noFavoritePlaylists => 'No favorite playlists yet';
+
+  @override
+  String get noFavoritePlaylistsDesc => 'Heart any playlist to save it here';
+
+  @override
+  String get discoverPlaylists => 'Discover';
+
+  @override
+  String get discoverPublicPlaylists => 'Discover Public Playlists';
+
+  @override
+  String get searchPlaylistsHint => 'Search playlists by name...';
+
+  @override
+  String get noPublicPlaylistsFound => 'No public playlists found';
+
+  @override
+  String get addedToFavorites => 'Added to favorites';
+
+  @override
+  String get removedFromFavorites => 'Removed from favorites';
+
+  @override
+  String get recommendedSongs => 'Recommended for you';
+
+  @override
+  String get shuffleRecommendations => 'Shuffle';
+
+  @override
+  String get seeMore => 'See more';
+
+  @override
+  String get allFavoritesTitle => 'All Favorites';
+
+  @override
+  String get searchFavoritesHint => 'Search favorite songs or playlists...';
 }
