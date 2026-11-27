@@ -649,7 +649,7 @@ void main() {
     });
 
     testWidgets(
-      'FavouritePage limits favorite songs & playlists to 5 and See more opens AllFavoritesPage with full lists',
+      'FavouritePage limits favorite songs & playlists to 3 and See more opens AllFavoritesPage with full lists',
       (tester) async {
         tester.view.physicalSize = const Size(1080, 2400);
         tester.view.devicePixelRatio = 2.0;
@@ -724,23 +724,23 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Only first 5 playlists and songs are shown on FavouritePage
+        // Only first 3 playlists and songs are shown on FavouritePage
         expect(find.text('Fav Playlist 1'), findsOneWidget);
-        expect(find.text('Fav Playlist 5'), findsOneWidget);
-        expect(find.text('Fav Playlist 6'), findsNothing);
+        expect(find.text('Fav Playlist 3'), findsOneWidget);
+        expect(find.text('Fav Playlist 4'), findsNothing);
         expect(find.text('Fav Playlist 7'), findsNothing);
 
         expect(find.text('Fav Song 1'), findsOneWidget);
-        expect(find.text('Fav Song 5'), findsOneWidget);
-        expect(find.text('Fav Song 6'), findsNothing);
+        expect(find.text('Fav Song 3'), findsOneWidget);
+        expect(find.text('Fav Song 4'), findsNothing);
         expect(find.text('Fav Song 7'), findsNothing);
 
-        // Two "See more (7)" buttons appear (one for playlists, one for songs)
-        expect(find.text('See more (7)'), findsNWidgets(2));
+        // Two "See more" buttons appear (one for playlists, one for songs)
+        expect(find.text('See more'), findsNWidgets(2));
 
-        // Tap "See more (7)" under Favorite Playlists (first button)
-        await tester.ensureVisible(find.text('See more (7)').first);
-        await tester.tap(find.text('See more (7)').first);
+        // Tap "See more" under Favorite Playlists (first button)
+        await tester.ensureVisible(find.text('See more').first);
+        await tester.tap(find.text('See more').first);
         await tester.pumpAndSettle();
 
         // AllFavoritesPage opens on Playlists tab showing all 7 playlists

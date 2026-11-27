@@ -215,7 +215,7 @@ class FavouriteMusicGrid extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Text(
-                      '${context.l10n.seeMore}',
+                      context.l10n.seeMore,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.labelLarge?.copyWith(

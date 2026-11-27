@@ -149,6 +149,7 @@ class _MySongsListViewState extends State<MySongsListView> {
       },
       child: SingleChildScrollView(
         controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.md,
