@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,10 @@ import '../../../favorite/presentation/bloc/favorite_event.dart';
 import '../../../favorite/domain/entities/song_entity.dart' as playlist_song;
 import '../../../favorite/presentation/bloc/playlist_bloc.dart';
 import '../../../favorite/presentation/widgets/add_to_playlist_bottom_sheet.dart';
+import '../../../history/domain/entities/history_entity.dart';
+import '../../../history/presentation/bloc/history_bloc.dart';
+import '../../../history/presentation/bloc/history_event.dart';
+import '../../../history/presentation/bloc/history_state.dart';
 import '../../data/models/song_model.dart';
 import '../../domain/entities/song_entity.dart';
 import '../bloc/home_bloc.dart';
@@ -59,6 +65,18 @@ class _HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<_HomeView> {
   final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final historyBloc = _readHistoryBloc(context);
+      if (historyBloc != null && historyBloc.state is HistoryInitial) {
+        historyBloc.add(const HistoryLoadRequested());
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -134,6 +152,50 @@ class _HomeViewState extends State<_HomeView> {
     }
   }
 
+  HistoryBloc? _readHistoryBloc(BuildContext context) {
+    try {
+      return context.read<HistoryBloc>();
+    } catch (_) {
+      return sl.isRegistered<HistoryBloc>() ? sl<HistoryBloc>() : null;
+    }
+  }
+
+  SongModel _historyToHomeSongModel(HistoryEntity item) {
+    final s = item.song;
+    final rawCover = s.coverUrl?.trim();
+    final cleanCover = (rawCover != null &&
+            rawCover.isNotEmpty &&
+            rawCover != 'null' &&
+            rawCover != 'undefined')
+        ? rawCover
+        : null;
+    return SongModel(
+      id: s.id,
+      title: s.title,
+      artist: s.artist,
+      album: s.album,
+      coverUrl: cleanCover,
+      duration: s.duration,
+      fileUrl: s.fileUrl,
+    );
+  }
+
+  List<SongModel> _buildRecentSongsFromHistory(List<HistoryEntity> history) {
+    final seenIds = <String>{};
+    final recentSongs = <SongModel>[];
+    for (final item in history) {
+      final id = item.song.id;
+      if (id.isNotEmpty && !seenIds.add(id)) {
+        continue;
+      }
+      recentSongs.add(_historyToHomeSongModel(item));
+      if (recentSongs.length >= 10) {
+        break;
+      }
+    }
+    return recentSongs;
+  }
+
   playlist_song.SongEntity _toPlaylistSong(SongEntity song) {
     return playlist_song.SongEntity(
       id: song.id,
@@ -202,9 +264,30 @@ class _HomeViewState extends State<_HomeView> {
               color: colorScheme.primary,
               backgroundColor: appColors.cardSurface,
               onRefresh: () async {
-                context.read<HomeBloc>().add(const HomeRefreshRequested());
+                final homeCompleter = Completer<void>();
+                context.read<HomeBloc>().add(
+                  HomeRefreshRequested(completer: homeCompleter),
+                );
+
+                final historyBloc = _readHistoryBloc(context);
+                Completer<void>? historyCompleter;
+                if (historyBloc != null) {
+                  historyCompleter = Completer<void>();
+                  historyBloc.add(
+                    HistoryLoadRequested(
+                      isRefresh: true,
+                      completer: historyCompleter,
+                    ),
+                  );
+                }
+
+                await Future.wait([
+                  homeCompleter.future,
+                  if (historyCompleter != null) historyCompleter.future,
+                ]);
               },
               child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.symmetric(
@@ -304,23 +387,14 @@ class _HomeViewState extends State<_HomeView> {
       );
     }
 
-    final recentSongs = allSongs.take(5).map((s) => s.toSongModel()).toList();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (recentSongs.isNotEmpty) ...[
-          RecentlyPlayedSection(
-            songs: recentSongs,
-            onSongTap: (song) => _onPlaySongModel(
-              context,
-              song,
-              recentSongs,
-              favoriteSongIds: favoriteSongIds,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
-        ],
+        _buildRecentSection(
+          context,
+          allSongs: allSongs,
+          favoriteSongIds: favoriteSongIds,
+        ),
         RecommendSongsSection(
           songs: recommendedSongs,
           isSearching: false,
@@ -338,6 +412,63 @@ class _HomeViewState extends State<_HomeView> {
           onAddToPlaylist: onAdd,
         ),
       ],
+    );
+  }
+
+  Widget _buildRecentSection(
+    BuildContext context, {
+    required List<SongEntity> allSongs,
+    required Set<String> favoriteSongIds,
+  }) {
+    final historyBloc = _readHistoryBloc(context);
+    if (historyBloc == null) {
+      final fallbackRecent = allSongs.take(5).map((s) => s.toSongModel()).toList();
+      if (fallbackRecent.isEmpty) {
+        return const SizedBox.shrink();
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RecentlyPlayedSection(
+            songs: fallbackRecent,
+            onSongTap: (song) => _onPlaySongModel(
+              context,
+              song,
+              fallbackRecent,
+              favoriteSongIds: favoriteSongIds,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
+        ],
+      );
+    }
+
+    return BlocBuilder<HistoryBloc, HistoryState>(
+      bloc: historyBloc,
+      builder: (context, historyState) {
+        if (historyState is! HistoryLoaded || historyState.history.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final recentSongs = _buildRecentSongsFromHistory(historyState.history);
+        if (recentSongs.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RecentlyPlayedSection(
+              songs: recentSongs,
+              onSongTap: (song) => _onPlaySongModel(
+                context,
+                song,
+                recentSongs,
+                favoriteSongIds: favoriteSongIds,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
+          ],
+        );
+      },
     );
   }
 

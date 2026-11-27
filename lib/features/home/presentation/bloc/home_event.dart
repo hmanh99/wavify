@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 
 abstract class HomeEvent extends Equatable {
@@ -12,7 +14,9 @@ class HomeLoadSongsRequested extends HomeEvent {
 }
 
 class HomeRefreshRequested extends HomeEvent {
-  const HomeRefreshRequested();
+  final Completer<void>? completer;
+
+  const HomeRefreshRequested({this.completer});
 }
 
 class HomeSearchQueryChanged extends HomeEvent {

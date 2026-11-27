@@ -14,6 +14,7 @@ import 'features/auth/presentation/bloc/auth_state.dart';
 import 'features/favorite/presentation/bloc/favorite_bloc.dart';
 import 'features/favorite/presentation/bloc/favorite_event.dart';
 import 'features/history/presentation/bloc/history_bloc.dart';
+import 'features/history/presentation/bloc/history_event.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
 import 'features/home/presentation/bloc/home_event.dart';
 import 'features/listen/presentation/bloc/player_bloc.dart';
@@ -81,12 +82,15 @@ class MyApp extends StatelessWidget {
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, authState) {
           if (authState is AuthAuthenticated) {
+            context.read<HomeBloc>().add(const HomeLoadSongsRequested());
+            context.read<HistoryBloc>().add(const HistoryLoadRequested());
             context.read<FavoriteBloc>().add(const LoadFavoritesRequested());
             context.read<PlaylistBloc>().add(const LoadPlaylistsRequested());
             context.read<ProfileBloc>().add(const ProfileLoadRequested());
             context.read<UploadBloc>().add(const LoadMySongsRequested());
           } else if (authState is AuthUnauthenticated) {
             context.read<FavoriteBloc>().add(const ClearFavoritesRequested());
+            context.read<HistoryBloc>().add(const HistorySessionCleared());
           }
         },
         child: BlocBuilder<LocaleBloc, LocaleState>(

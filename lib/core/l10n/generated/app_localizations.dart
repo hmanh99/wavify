@@ -1147,6 +1147,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search favorite songs or playlists...'**
   String get searchFavoritesHint;
+
+  /// No description provided for @previousPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous page'**
+  String get previousPage;
+
+  /// No description provided for @nextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get nextPage;
+
+  /// No description provided for @showingSongsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{start}-{end} of {total} songs'**
+  String showingSongsRange(int start, int end, int total);
 }
 
 class _AppLocalizationsDelegate

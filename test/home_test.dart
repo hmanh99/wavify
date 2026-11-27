@@ -6,6 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wavify/core/di/service_locator.dart';
 import 'package:wavify/core/theme/app_theme.dart';
+import 'package:wavify/features/history/data/models/history_model.dart';
+import 'package:wavify/features/history/data/models/history_song_model.dart';
+import 'package:wavify/features/history/domain/entities/history_entity.dart';
+import 'package:wavify/features/history/domain/repositories/history_repository.dart';
+import 'package:wavify/features/history/domain/usecases/clear_history_usecase.dart';
+import 'package:wavify/features/history/domain/usecases/delete_history_item_usecase.dart';
+import 'package:wavify/features/history/domain/usecases/get_history_usecase.dart';
+import 'package:wavify/features/history/domain/usecases/record_history_usecase.dart';
+import 'package:wavify/features/history/presentation/bloc/history_bloc.dart';
+import 'package:wavify/features/history/presentation/bloc/history_event.dart';
 import 'package:wavify/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:wavify/features/home/domain/repositories/home_repository.dart';
 import 'package:wavify/features/home/domain/usecases/get_all_songs_usecase.dart';
@@ -13,6 +23,7 @@ import 'package:wavify/features/home/presentation/bloc/home_bloc.dart';
 import 'package:wavify/features/home/presentation/bloc/home_event.dart';
 import 'package:wavify/features/home/presentation/bloc/home_state.dart';
 import 'package:wavify/features/home/presentation/pages/home_page.dart';
+import 'package:wavify/features/home/presentation/widgets/recently_played_section.dart';
 import 'package:wavify/features/home/presentation/widgets/recommend_songs_section.dart';
 import 'package:wavify/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:wavify/features/home/domain/entities/song_entity.dart';
@@ -51,6 +62,30 @@ class MockHomeRepository implements HomeRepository {
       throw Exception('Không thể kết nối đến máy chủ');
     }
     return songs;
+  }
+}
+
+class _FakeHomeHistoryRepository implements HistoryRepository {
+  List<HistoryEntity> items = [];
+  int getHistoryCallCount = 0;
+
+  @override
+  Future<List<HistoryEntity>> getHistory({int page = 0, int size = 20}) async {
+    getHistoryCallCount++;
+    return List<HistoryEntity>.from(items);
+  }
+
+  @override
+  Future<void> recordHistory(String songId) async {}
+
+  @override
+  Future<void> clearHistory() async {
+    items.clear();
+  }
+
+  @override
+  Future<void> deleteHistoryItem(String historyId) async {
+    items.removeWhere((h) => h.id == historyId);
   }
 }
 
@@ -304,6 +339,110 @@ void main() {
           .map((s) => s.id)
           .toList();
       expect(afterOrder, isNot(equals(beforeOrder)));
+    });
+
+    testWidgets('HomePage displays RecentlyPlayedSection from HistoryBloc, auto-updates and refreshes', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      final mockHomeRepo = MockHomeRepository();
+      final fakeHistoryRepo = _FakeHomeHistoryRepository();
+      final homeBloc = HomeBloc(getAllSongsUseCase: GetAllSongsUseCase(mockHomeRepo))
+        ..add(const HomeLoadSongsRequested());
+      final historyBloc = HistoryBloc(
+        getHistoryUseCase: GetHistoryUseCase(fakeHistoryRepo),
+        recordHistoryUseCase: RecordHistoryUseCase(fakeHistoryRepo),
+        clearHistoryUseCase: ClearHistoryUseCase(fakeHistoryRepo),
+        deleteHistoryItemUseCase: DeleteHistoryItemUseCase(fakeHistoryRepo),
+      );
+      addTearDown(() async {
+        await homeBloc.close();
+        await historyBloc.close();
+      });
+
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<HomeBloc>.value(value: homeBloc),
+            BlocProvider<HistoryBloc>.value(value: historyBloc),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: const HomePage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Empty history -> RecentlyPlayedSection should NOT be rendered
+      expect(find.byType(RecentlyPlayedSection), findsNothing);
+      expect(fakeHistoryRepo.getHistoryCallCount, 1);
+
+      // Simulate a song listened past threshold and history refreshed
+      fakeHistoryRepo.items = [
+        HistoryModel(
+          id: 'h-1',
+          song: const HistorySongModel(
+            id: 'recent-1',
+            title: 'Recently Listened Track',
+            artist: 'History Artist',
+            duration: Duration(seconds: 200),
+            fileUrl: 'https://example.com/recent1.mp3',
+          ),
+          playedAt: DateTime(2026, 11, 27, 10, 0),
+        ),
+        // Duplicate song id should be deduplicated
+        HistoryModel(
+          id: 'h-0',
+          song: const HistorySongModel(
+            id: 'recent-1',
+            title: 'Recently Listened Track',
+            artist: 'History Artist',
+            duration: Duration(seconds: 200),
+            fileUrl: 'https://example.com/recent1.mp3',
+          ),
+          playedAt: DateTime(2026, 11, 27, 9, 0),
+        ),
+      ];
+      // Trigger auto-update on the provided HistoryBloc
+      historyBloc.add(const HistoryLoadRequested(isRefresh: true));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(RecentlyPlayedSection), findsOneWidget);
+      expect(find.text('Recently Listened Track'), findsOneWidget);
+
+      // Pull-to-refresh should reload both HomeBloc and HistoryBloc
+      fakeHistoryRepo.items = [
+        HistoryModel(
+          id: 'h-2',
+          song: const HistorySongModel(
+            id: 'recent-2',
+            title: 'Refreshed Recent Song',
+            artist: 'New Artist',
+            duration: Duration(seconds: 180),
+            fileUrl: 'https://example.com/recent2.mp3',
+          ),
+          playedAt: DateTime(2026, 11, 27, 11, 0),
+        ),
+        ...fakeHistoryRepo.items,
+      ];
+
+      await tester.fling(
+        find.byType(SingleChildScrollView).first,
+        const Offset(0, 300),
+        1000,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(fakeHistoryRepo.getHistoryCallCount, greaterThanOrEqualTo(3));
+      expect(find.text('Refreshed Recent Song'), findsOneWidget);
     });
   });
 }

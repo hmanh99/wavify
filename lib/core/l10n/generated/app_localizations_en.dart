@@ -570,4 +570,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchFavoritesHint => 'Search favorite songs or playlists...';
+
+  @override
+  String get previousPage => 'Previous page';
+
+  @override
+  String get nextPage => 'Next page';
+
+  @override
+  String showingSongsRange(int start, int end, int total) {
+    return '$start-$end of $total songs';
+  }
 }

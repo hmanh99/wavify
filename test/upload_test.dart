@@ -20,6 +20,7 @@ import 'package:wavify/features/upload/presentation/bloc/upload_bloc.dart';
 import 'package:wavify/features/upload/presentation/bloc/upload_event.dart';
 import 'package:wavify/features/upload/presentation/bloc/upload_state.dart';
 import 'package:wavify/features/upload/presentation/pages/upload_music_page.dart';
+import 'package:wavify/features/upload/presentation/widgets/my_songs_list_view.dart';
 
 class MockSongRepository implements SongRepository {
   final List<SongEntity> storedSongs = [
@@ -364,6 +365,125 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.byType(UploadMusicPage), findsOneWidget);
+    });
+
+    testWidgets('My Songs tab aligns list from top to bottom instead of centering vertically',
+        (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: const UploadMusicPage(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Switch to My Songs tab
+      await tester.tap(find.text('Bài hát của tôi'));
+      await tester.pumpAndSettle();
+
+      final tabBarViewRect = tester.getRect(find.byType(TabBarView));
+      final firstSongRect = tester.getRect(find.text('Echoes of Dawn'));
+
+      // Song list should start near the top of TabBarView, not vertically centered
+      expect(firstSongRect.top - tabBarViewRect.top, lessThan(100));
+    });
+
+    testWidgets('MySongsListView paginates 20 songs per page on the frontend',
+        (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      List<SongEntity> buildSongs(int count) {
+        return List.generate(
+          count,
+          (i) => SongEntity(
+            id: 'song-${i + 1}',
+            title: 'Song ${i + 1}',
+            artist: 'Artist ${i + 1}',
+            durationSec: 180,
+            fileUrl: 'https://example.com/${i + 1}.mp3',
+            visibility: 'PUBLIC',
+          ),
+        );
+      }
+
+      // 20 songs -> 1 page, no pagination bar
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.darkTheme,
+          home: Scaffold(
+            body: MySongsListView(songs: buildSongs(20)),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Song 1'), findsOneWidget);
+      expect(find.text('Song 20'), findsOneWidget);
+      expect(find.byTooltip('Trang sau'), findsNothing);
+
+      // 45 songs -> 3 pages (20, 20, 5)
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.darkTheme,
+          home: Scaffold(
+            body: MySongsListView(songs: buildSongs(45)),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Song 1'), findsOneWidget);
+      expect(find.text('Song 20'), findsOneWidget);
+      expect(find.text('Song 21'), findsNothing);
+      expect(find.text('1-20 / 45 bài hát'), findsOneWidget);
+
+      // Go to page 2
+      final nextBtn = find.byTooltip('Trang sau');
+      await tester.ensureVisible(nextBtn);
+      await tester.tap(nextBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Song 1'), findsNothing);
+      expect(find.text('Song 21'), findsOneWidget);
+      expect(find.text('Song 40'), findsOneWidget);
+      expect(find.text('Song 41'), findsNothing);
+      expect(find.text('21-40 / 45 bài hát'), findsOneWidget);
+
+      // Go to page 3
+      await tester.ensureVisible(find.text('3'));
+      await tester.tap(find.text('3'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Song 41'), findsOneWidget);
+      expect(find.text('Song 45'), findsOneWidget);
+      expect(find.text('41-45 / 45 bài hát'), findsOneWidget);
+
+      // Shrinking list clamps page back to valid last page (e.g. 25 songs -> page 2)
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.darkTheme,
+          home: Scaffold(
+            body: MySongsListView(songs: buildSongs(25)),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Song 21'), findsOneWidget);
+      expect(find.text('Song 25'), findsOneWidget);
+      expect(find.text('21-25 / 25 bài hát'), findsOneWidget);
     });
   });
 }

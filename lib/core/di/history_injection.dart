@@ -11,6 +11,7 @@ import '../../features/history/domain/usecases/delete_history_item_usecase.dart'
 import '../../features/history/domain/usecases/get_history_usecase.dart';
 import '../../features/history/domain/usecases/record_history_usecase.dart';
 import '../../features/history/presentation/bloc/history_bloc.dart';
+import '../../features/history/presentation/bloc/history_event.dart';
 import 'service_locator.dart';
 
 Future<void> initHistoryDependencies({String? baseUrl, Dio? customDio}) async {
@@ -52,7 +53,15 @@ Future<void> initHistoryDependencies({String? baseUrl, Dio? customDio}) async {
 
   if (!sl.isRegistered<TrackListenCallback>()) {
     sl.registerLazySingleton<TrackListenCallback>(
-      () => sl<RecordHistoryUseCase>().call,
+      () => (String songId) async {
+        await sl<RecordHistoryUseCase>()(songId);
+        if (sl.isRegistered<HistoryBloc>()) {
+          final historyBloc = sl<HistoryBloc>();
+          if (!historyBloc.isClosed) {
+            historyBloc.add(const HistoryLoadRequested(isRefresh: true));
+          }
+        }
+      },
     );
   }
 
@@ -74,9 +83,9 @@ Future<void> initHistoryDependencies({String? baseUrl, Dio? customDio}) async {
     );
   }
 
-  // 4. Presentation BLoC
+  // 4. Presentation BLoC (Singleton so state is shared across Home, History, and Player)
   if (!sl.isRegistered<HistoryBloc>()) {
-    sl.registerFactory<HistoryBloc>(
+    sl.registerLazySingleton<HistoryBloc>(
       () => HistoryBloc(
         getHistoryUseCase: sl<GetHistoryUseCase>(),
         recordHistoryUseCase: sl<RecordHistoryUseCase>(),
