@@ -182,5 +182,15 @@
   "shuffleRecommendations": "Đổi bài",
   "seeMore": "Xem thêm",
   "allFavoritesTitle": "Tất cả yêu thích",
-  "searchFavoritesHint": "Tìm bài hát hoặc playlist yêu thích..."
+  "searchFavoritesHint": "Tìm bài hát hoặc playlist yêu thích...",
+  "previousPage": "Trang trước",
+  "nextPage": "Trang sau",
+  "showingSongsRange": "{start}-{end} / {total} bài hát",
+  "@showingSongsRange": {
+    "placeholders": {
+      "start": { "type": "int" },
+      "end": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  }
 }

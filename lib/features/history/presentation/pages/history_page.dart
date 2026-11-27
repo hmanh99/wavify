@@ -29,8 +29,8 @@ class HistoryPage extends StatelessWidget {
     }
 
     if (!hasBloc && sl.isRegistered<HistoryBloc>()) {
-      return BlocProvider<HistoryBloc>(
-        create: (_) => sl<HistoryBloc>(),
+      return BlocProvider<HistoryBloc>.value(
+        value: sl<HistoryBloc>(),
         child: const _HistoryView(),
       );
     }

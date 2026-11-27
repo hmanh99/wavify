@@ -558,12 +558,17 @@ class _UploadMusicViewState extends State<_UploadMusicView>
                     ),
                   ),
                 ),
-                Center(
+                Align(
+                  alignment: Alignment.topCenter,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 720),
-                    child: MySongsListView(
-                      songs: state.songs,
-                      isLoading: isLoadingList,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: MySongsListView(
+                        songs: state.songs,
+                        isLoading: isLoadingList,
+                      ),
                     ),
                   ),
                 ),

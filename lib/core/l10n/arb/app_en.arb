@@ -257,5 +257,15 @@
   "shuffleRecommendations": "Shuffle",
   "seeMore": "See more",
   "allFavoritesTitle": "All Favorites",
-  "searchFavoritesHint": "Search favorite songs or playlists..."
+  "searchFavoritesHint": "Search favorite songs or playlists...",
+  "previousPage": "Previous page",
+  "nextPage": "Next page",
+  "showingSongsRange": "{start}-{end} of {total} songs",
+  "@showingSongsRange": {
+    "placeholders": {
+      "start": { "type": "int" },
+      "end": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  }
 }

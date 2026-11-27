@@ -21,6 +21,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     on<HistoryLoadRequested>(_onLoadRequested);
     on<HistoryRecordRequested>(_onRecordRequested);
     on<HistoryClearRequested>(_onClearRequested);
+    on<HistorySessionCleared>(_onSessionCleared);
     on<HistoryDeleteItemRequested>(_onDeleteItemRequested);
   }
 
@@ -36,7 +37,13 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       final list = await getHistoryUseCase();
       emit(HistoryLoaded(list));
     } catch (e) {
-      emit(HistoryFailure(e.toString().replaceAll('Exception: ', '')));
+      if (!(event.isRefresh && state is HistoryLoaded)) {
+        emit(HistoryFailure(e.toString().replaceAll('Exception: ', '')));
+      }
+    } finally {
+      if (event.completer != null && !event.completer!.isCompleted) {
+        event.completer!.complete();
+      }
     }
   }
 
@@ -59,6 +66,13 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     } catch (e) {
       emit(HistoryFailure(e.toString().replaceAll('Exception: ', '')));
     }
+  }
+
+  void _onSessionCleared(
+    HistorySessionCleared event,
+    Emitter<HistoryState> emit,
+  ) {
+    emit(const HistoryInitial());
   }
 
   Future<void> _onDeleteItemRequested(

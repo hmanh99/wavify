@@ -574,4 +574,15 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get searchFavoritesHint => 'Tìm bài hát hoặc playlist yêu thích...';
+
+  @override
+  String get previousPage => 'Trang trước';
+
+  @override
+  String get nextPage => 'Trang sau';
+
+  @override
+  String showingSongsRange(int start, int end, int total) {
+    return '$start-$end / $total bài hát';
+  }
 }

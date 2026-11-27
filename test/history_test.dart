@@ -317,6 +317,80 @@ void main() {
       expect(loaded.history.length, 1);
       expect(loaded.history.first.id, 'hist-2');
     });
+
+    test('HistorySessionCleared resets state to HistoryInitial without clearing remote', () async {
+      mockRemote.mockList = [testHistory1];
+      historyBloc.add(const HistoryLoadRequested());
+      await pumpEventQueue();
+      expect(historyBloc.state, isA<HistoryLoaded>());
+
+      historyBloc.add(const HistorySessionCleared());
+      await pumpEventQueue();
+      expect(historyBloc.state, const HistoryInitial());
+      expect(mockRemote.mockList.length, 1);
+    });
+
+    test('HistoryLoadRequested with isRefresh preserves HistoryLoaded on error', () async {
+      mockRemote.mockList = [testHistory1];
+      historyBloc.add(const HistoryLoadRequested());
+      await pumpEventQueue();
+      expect(historyBloc.state, isA<HistoryLoaded>());
+
+      mockRemote.shouldThrow = true;
+      historyBloc.add(const HistoryLoadRequested(isRefresh: true));
+      await pumpEventQueue();
+      expect(historyBloc.state, isA<HistoryLoaded>());
+      expect((historyBloc.state as HistoryLoaded).history.length, 1);
+    });
+  });
+
+  group('DI Listen -> HistoryBloc Auto-Refresh Integration Tests', () {
+    setUp(() async {
+      await sl.reset();
+    });
+
+    tearDown(() async {
+      await sl.reset();
+    });
+
+    test('Listening past 30s via PlayerBloc records history and refreshes singleton HistoryBloc', () async {
+      final mockRemote = MockHistoryRemoteDataSource();
+      final fakeLocal = FakeHistoryLocalDataSource();
+      final fakeAudio = FakeAudioPlayerService();
+
+      sl.registerLazySingleton<HistoryRepository>(
+        () => HistoryRepositoryImpl(
+          remoteDataSource: mockRemote,
+          localDataSource: fakeLocal,
+        ),
+      );
+      await initHistoryDependencies();
+      await initListenDependencies(customAudioPlayerService: fakeAudio);
+
+      final historyBloc = sl<HistoryBloc>();
+      final playerBloc = sl<PlayerBloc>();
+      expect(identical(historyBloc, sl<HistoryBloc>()), isTrue);
+
+      mockRemote.mockList = [testHistory1];
+      playerBloc.add(
+        PlayerPlayPlaylistRequested(
+          playlist: [testHistorySong1.toPlaybackMap()],
+          initialIndex: 0,
+        ),
+      );
+      await pumpEventQueue();
+
+      fakeAudio.emitPosition(const Duration(seconds: 31));
+      await pumpEventQueue();
+
+      expect(mockRemote.recordedSongIds, contains('song-1'));
+      expect(historyBloc.state, isA<HistoryLoaded>());
+      expect((historyBloc.state as HistoryLoaded).history.first.song.id, 'song-1');
+
+      await playerBloc.close();
+      await historyBloc.close();
+      await fakeAudio.dispose();
+    });
   });
 
   group('PlayerBloc 15-Second Minimum Listening History Tracking Tests', () {

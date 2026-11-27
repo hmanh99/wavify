@@ -30,7 +30,7 @@ class RecentlyPlayedSection extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (int i = 0; i < songs.length; i++) ...[
+              for (int i = 0; i < 5; i++) ...[
                 if (i > 0) const SizedBox(width: AppSpacing.md),
                 _RecentSongTile(
                   song: songs[i],

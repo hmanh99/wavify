@@ -75,6 +75,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ? (state as HomeLoaded).allSongs
           : null;
       emit(HomeFailure(_cleanError(e), cachedSongs: currentSongs));
+    } finally {
+      if (event.completer != null && !event.completer!.isCompleted) {
+        event.completer!.complete();
+      }
     }
   }
 
